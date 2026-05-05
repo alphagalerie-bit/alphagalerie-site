@@ -2429,7 +2429,6 @@ footer {
         const { data: cats } = await sb
           .from('categorias')
           .select('*')
-          .eq('ativo', true)
           .order('ordem');
 
         allCategories = cats || [];
