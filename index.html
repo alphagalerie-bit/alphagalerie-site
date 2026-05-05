@@ -2436,7 +2436,7 @@ footer {
         renderFilters();
 
         const { data: prods, error: prodsError } = await sb
-          .from('produtos')
+          .from('produtos_novo')
           .select('*')
           .eq('ativo', true)
           .order('nome');
