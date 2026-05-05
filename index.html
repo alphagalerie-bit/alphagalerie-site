@@ -2006,33 +2006,55 @@
       }
     }
 
-    async function carregarProdutos() {
-      const tabelas = ['produtos_novo', 'produtos'];
-      let ultimoErro = null;
+     async function carregarProdutos() {
+          const tabelas = ['produtos_novos', 'produtos'];  // ← CORRIGIDO
+          let ultimoErro = null;
 
-      for (const tabela of tabelas) {
-        try {
-          let resp = await sb.from(tabela).select('*').order('nome');
-          if (resp.error) {
-            // algumas tabelas antigas usam nome_texto
-            resp = await sb.from(tabela).select('*').order('nome_texto');
+          console.log('🔍 Iniciando carregamento de produtos...');
+
+          for (const tabela of tabelas) {
+            try {
+              console.log(`📊 Tentando tabela: ${tabela}`);
+              
+              // Tenta carregar SEM ordenação primeiro
+              let resp = await sb.from(tabela).select('*');
+              console.log(`Resposta ${tabela} (sem order):`, resp);
+              
+              if (resp.error) {
+                console.warn(`❌ Erro em ${tabela}:`, resp.error);
+                ultimoErro = resp.error;
+                continue;
+              }
+              
+              const dados = resp.data || [];
+              console.log(`✅ ${tabela}: ${dados.length} produtos encontrados`);
+              
+              if (dados.length > 0) {
+                console.log('📦 Primeiro produto RAW:', dados[0]);
+                
+                const normalizados = dados.map(normalizarProduto);
+                console.log('🔧 Primeiro produto NORMALIZADO:', normalizados[0]);
+                
+                const comNome = normalizados.filter(p => p.nome);
+                console.log(`✅ Produtos COM nome: ${comNome.length} de ${normalizados.length}`);
+                
+                if (comNome.length === 0) {
+                  console.error('❌ TODOS os produtos foram filtrados (sem nome)');
+                  console.log('Campos disponíveis no primeiro produto:', Object.keys(dados[0]));
+                }
+                
+                return comNome;
+              }
+            } catch (e) {
+              console.error(`🔥 Exception em ${tabela}:`, e);
+              ultimoErro = e;
+            }
           }
-          if (resp.error) {
-            ultimoErro = resp.error;
-            continue;
-          }
-          const dados = resp.data || [];
-          if (dados.length) {
-            console.log('Produtos carregados da tabela:', tabela, dados.length);
-            return dados.map(normalizarProduto).filter(p => p.nome);
-          }
-        } catch (e) {
-          ultimoErro = e;
+          
+          console.error('❌ NENHUM PRODUTO CARREGADO');
+          if (ultimoErro) console.warn('Último erro:', ultimoErro);
+          return [];
         }
-      }
-      if (ultimoErro) console.warn('Erro ao carregar produtos:', ultimoErro);
-      return [];
-    }
 
     async function loadData() {
       try {
