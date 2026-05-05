@@ -2494,24 +2494,7 @@
 
         renderFilters();
 
-        // Buscar variações do banco, se existir a tabela.
-        if (allProducts.length) {
-          const ids = allProducts.map(p => p.id).filter(Boolean);
-          if (ids.length) {
-            let varsResp = await sb
-              .from('produto_variacoes')
-              .select('*')
-              .in('produto_id', ids)
-              .order('ordem', { ascending: true })
-              .order('id', { ascending: true });
 
-            if (varsResp.error) {
-              console.warn('Variações não carregadas:', varsResp.error);
-            } else {
-              const todasVars = varsResp.data || [];
-              allProducts.forEach(p => {
-                p._variacoes = todasVars.filter(v => String(v.produto_id) === String(p.id));
-              });
             }
           }
         }
