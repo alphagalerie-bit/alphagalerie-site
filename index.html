@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
@@ -51,1608 +52,1611 @@
       --maxw: 1320px;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Inter', sans-serif;
-      font-weight: 400;
-      line-height: 1.5;
-      overflow-x: hidden;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    a { color: inherit; text-decoration: none; }
-    img { max-width: 100%; display: block; }
-    button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
-
-    .container { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
-    .serif { font-family: 'Cormorant Garamond', serif; }
-    .mono { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; }
-
-    .btn {
-      padding: 14px 28px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px; font-weight: 500;
-      letter-spacing: 0.18em; text-transform: uppercase;
-      transition: all 0.2s;
-      cursor: pointer;
-      border: none;
-    }
-    .btn-gold {
-      background: var(--gold);
-      color: #000;
-    }
-    .btn-gold:hover {
-      background: var(--text);
-      box-shadow: 0 0 30px var(--gold-glow);
-    }
-    .btn-ghost {
-      background: transparent;
-      color: var(--text-dim);
-      border: 1px solid var(--line);
-    }
-    .btn-ghost:hover {
-      border-color: var(--text-dim);
-      color: var(--text);
-    }
-
-    /* ============================================
-       ANNOUNCEMENT
-       ============================================ */
-    .announcement {
-      background: #000;
-      border-bottom: 1px solid var(--line-soft);
-      color: var(--text-dim);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px; font-weight: 400;
-      letter-spacing: 0.2em; text-transform: uppercase;
-      padding: 10px 0;
-      overflow: hidden; white-space: nowrap;
-    }
-    .announcement-track {
-      display: inline-flex;
-      gap: 60px;
-      animation: marquee 50s linear infinite;
-    }
-    .announcement-track span::before {
-      content: '◆';
-      margin-right: 60px;
-      color: var(--gold);
-    }
-    @keyframes marquee {
-      from { transform: translateX(0); }
-      to { transform: translateX(-50%); }
-    }
-
-    /* ============================================
-       NAV
-       ============================================ */
-    .nav {
-      position: sticky; top: 0; z-index: 100;
-      background: rgba(10, 10, 10, 0.92);
-      backdrop-filter: blur(24px);
-      border-bottom: 1px solid var(--line-soft);
-    }
-    .nav-inner {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 22px 24px;
-      max-width: var(--maxw); margin: 0 auto;
-    }
-    .logo { display: flex; align-items: center; }
-    .logo-img {
-      height: 48px;
-      width: auto;
-      filter: drop-shadow(0 0 8px rgba(201,169,97,0.3));
-      transition: filter 0.3s;
-    }
-    .logo-img:hover {
-      filter: drop-shadow(0 0 14px rgba(201,169,97,0.6));
-    }
-
-    .nav-links {
-      display: flex; gap: 36px; align-items: center;
-    }
-    .nav-links a {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      letter-spacing: 0.15em; text-transform: uppercase;
-      color: var(--text-dim);
-      transition: color 0.2s;
-      position: relative;
-    }
-    .nav-links a:hover { color: var(--gold); }
-    .nav-links a.cart-btn {
-      color: var(--text);
-      display: flex; align-items: center; gap: 8px;
-      padding: 8px 16px;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      transition: all 0.2s;
-    }
-    .nav-links a.cart-btn:hover {
-      border-color: var(--gold);
-      color: var(--gold);
-    }
-    .cart-count {
-      background: var(--gold);
-      color: #000;
-      width: 20px; height: 20px;
-      border-radius: 50%;
-      display: inline-flex;
-      align-items: center; justify-content: center;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0;
-    }
-
-    @media (max-width: 768px) {
-      .nav-links a:not(.cart-btn) { display: none; }
-    }
-
-    /* ============================================
-       MOBILE — otimizado para compra confortável
-       ============================================ */
-    @media (max-width: 640px) {
-
-      /* Nav */
-      .nav-inner { padding: 14px 16px; }
-      .logo-img { height: 40px; }
-
-      /* Carrinho — botão maior e mais visível */
-      .nav-links a.cart-btn {
-        padding: 10px 18px;
-        font-size: 13px;
-        gap: 10px;
-        border-radius: 999px;
-      }
-      .cart-count {
-        width: 24px; height: 24px;
-        font-size: 12px;
-        font-weight: 800;
-      }
-
-      /* Hero */
-      .hero { padding: 36px 0 48px; }
-      .hero h1 {
-        font-size: clamp(34px, 9vw, 52px);
-        margin-bottom: 20px;
-        line-height: 1.05;
-      }
-      .hero-lead {
-        font-size: 16px;
-        line-height: 1.7;
-        margin-bottom: 32px;
-      }
-      .hero-eyebrow { font-size: 10px; margin-bottom: 24px; }
-      .btn-hero {
-        width: 100%;
-        justify-content: center;
-        padding: 18px 24px;
-        font-size: 13px;
-      }
-      .hero-meta {
-        grid-template-columns: repeat(3,1fr);
-        gap: 16px;
-        margin-top: 48px;
-        padding-top: 28px;
-      }
-      .hero-meta-item .num { font-size: 32px; }
-      .hero-meta-item .label { font-size: 9px; }
-
-      /* Seção vitrine */
-      .section { padding: 48px 0 60px; }
-      .section-head { margin-bottom: 36px; gap: 16px; }
-      .section-title { font-size: clamp(28px, 7vw, 40px); }
-      .section-sub { display: none; }
-      .section-eyebrow { font-size: 10px; margin-bottom: 12px; }
-
-      /* Filtros de categoria */
-      .filters {
-        gap: 8px;
-        margin-bottom: 20px;
-        padding-bottom: 20px;
-        overflow-x: auto;
-        flex-wrap: nowrap;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;
-        padding-right: 16px;
-      }
-      .filters::-webkit-scrollbar { display: none; }
-      .filter-btn {
-        padding: 10px 18px;
-        font-size: 11px;
-        white-space: nowrap;
-        flex-shrink: 0;
-        min-height: 40px;
-      }
-
-      /* Busca */
-      #searchInput { font-size: 15px; padding: 14px 16px 14px 44px; }
-
-      /* Grid de produtos — 1 coluna no mobile para ver melhor */
-      .products-grid {
-        grid-template-columns: 1fr;
-        gap: 16px;
-      }
-
-      /* Card de produto maior e mais confortável */
-      .product { flex-direction: row; min-height: 130px; }
-      .product-img {
-        width: 130px;
-        min-width: 130px;
-        aspect-ratio: unset;
-        height: auto;
-        border-right: 1px solid var(--line-soft);
-      }
-      .product-info {
-        padding: 16px;
-        flex: 1;
-        justify-content: space-between;
-      }
-      .product-cat { font-size: 10px; margin-bottom: 6px; }
-      .product-name {
-        font-size: 18px;
-        margin-bottom: 10px;
-        line-height: 1.2;
-      }
-      .product-price { font-size: 26px; }
-      .product-price small { font-size: 10px; }
-      .product-cta {
-        padding: 12px 16px;
-        font-size: 11px;
-        letter-spacing: 0.12em;
-        min-height: 44px;
-      }
-      .product-badge { font-size: 8px; padding: 4px 8px; }
-
-      /* Carrinho drawer — full width, confortável */
-      .cart-drawer {
-        max-width: 100%;
-        width: 100%;
-      }
-      .cart-header { padding: 20px 20px 16px; }
-      .cart-header h3 { font-size: 26px; }
-      .cart-items { padding: 12px 16px; min-height: 0; }
-
-      /* Item do carrinho maior */
-      .cart-item { gap: 14px; padding: 16px 0; }
-      .cart-item-img { width: 80px; height: 80px; }
-      .cart-item-name { font-size: 18px; }
-      .cart-item-cat { font-size: 10px; }
-      .cart-qty button {
-        width: 40px; height: 40px;
-        font-size: 18px;
-      }
-      .cart-qty span {
-        width: 40px;
-        font-size: 16px;
-      }
-      .cart-item-price { font-size: 20px; }
-      .cart-item-remove { font-size: 11px; }
-      .cart-footer { padding: 16px 16px 24px; }
-      .cart-total-row { font-size: 12px; }
-      .cart-total-final .value { font-size: 32px; }
-      .cart-checkout-btn {
-        padding: 18px;
-        font-size: 13px;
-        min-height: 56px;
-        letter-spacing: 0.15em;
-      }
-
-      /* Hemp section */
-      .hemp-section { padding: 56px 0; }
-      .hemp-name { font-size: clamp(30px, 8vw, 44px); }
-      .hemp-title { font-size: 18px; }
-      .hemp-text { font-size: 14px; }
-      .hemp-cta {
-        width: 100%;
-        justify-content: center;
-        padding: 16px 24px;
-        font-size: 11px;
-      }
-
-      /* Footer */
-      .footer-grid { grid-template-columns: 1fr; gap: 28px; }
-      .footer-bottom { flex-direction: column; text-align: center; gap: 8px; }
-
-      /* Announcement */
-      .announcement { font-size: 9px; }
-
-      /* Checkout — mobile (estrutura head/body/foot) */
-      .checkout-box {
-        max-width: 100%;
-        margin: 0;
-        border-radius: 0;
-        border: none;
-      }
-      .checkout-head { padding: 16px 18px 14px; }
-      .checkout-head h3 { font-size: 22px; }
-      .checkout-head .sub { font-size: 11px; }
-      .checkout-body { padding: 16px 18px 24px; }
-      .checkout-body form { min-width: 0; }
-      .form-field textarea { resize: none; }
-      .checkout-foot { padding: 12px 16px; }
-      .checkout-foot-total .value { font-size: 26px; }
-      .checkout-foot-actions .btn { padding: 14px 16px; min-height: 50px; font-size: 11px; }
-      .checkout-foot-actions .btn-ghost { padding: 14px 18px; }
-      /* Cards de tipo de entrega/pagamento — encolher padding e gap */
-      .payment-opt-box { padding: 12px 12px; gap: 10px; }
-      .payment-opt-box small { font-size: 11px; line-height: 1.4; }
-      .payment-opt-box > span:last-child { flex-shrink: 0; }
-    }
-
-    /* ============================================
-       HERO
-       ============================================ */
-    .hero {
-      position: relative;
-      padding: 48px 0 64px;
-      overflow: hidden;
-    }
-    .hero::before {
-      content: '';
-      position: absolute;
-      top: 10%; right: -10%;
-      width: 600px; height: 600px;
-      background: radial-gradient(circle, var(--gold-glow) 0%, transparent 60%);
-      filter: blur(80px);
-      pointer-events: none;
-    }
-    .hero-grid {
-      max-width: var(--maxw); margin: 0 auto; padding: 0 24px;
-      position: relative; z-index: 1;
-    }
-
-    .hero-eyebrow {
-      display: inline-flex; align-items: center; gap: 14px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px; letter-spacing: 0.2em;
-      text-transform: uppercase; color: var(--gold);
-      margin-bottom: 32px;
-      animation: fadeUp 0.8s 0.1s both;
-    }
-    .hero-eyebrow::before {
-      content: ''; width: 32px; height: 1px;
-      background: var(--gold);
-    }
-
-    .hero h1 {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 400;
-      font-size: clamp(24px, 3.2vw, 48px);
-      line-height: 1;
-      letter-spacing: -0.02em;
-      margin-bottom: 24px;
-      animation: fadeUp 0.8s 0.2s both;
-    }
-    .hero h1 em {
-      font-style: italic;
-      color: var(--gold);
-    }
-    .hero h1 .light {
-      font-weight: 300;
-    }
-
-    .hero-lead {
-      max-width: 580px;
-      font-size: 17px;
-      color: var(--text-dim);
-      line-height: 1.7;
-      margin-bottom: 44px;
-      animation: fadeUp 0.8s 0.3s both;
-    }
-    .hero-lead strong { color: var(--text); font-weight: 500; }
-
-    .hero-actions {
-      display: flex; flex-wrap: wrap; gap: 12px;
-      animation: fadeUp 0.8s 0.4s both;
-    }
-
-    .btn-hero {
-      display: inline-flex; align-items: center; gap: 12px;
-      background: var(--gold);
-      color: #000;
-      padding: 18px 36px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12px; font-weight: 600;
-      letter-spacing: 0.18em; text-transform: uppercase;
-      transition: all 0.3s;
-      position: relative; overflow: hidden;
-    }
-    .btn-hero::before {
-      content: '';
-      position: absolute; inset: 0;
-      background: var(--text);
-      transform: translateX(-100%);
-      transition: transform 0.3s;
-    }
-    .btn-hero > * { position: relative; z-index: 1; }
-    .btn-hero:hover::before { transform: translateX(0); }
-    .btn-hero:hover { box-shadow: 0 10px 40px var(--gold-glow); }
-
-    .btn-hero-ghost {
-      display: inline-flex; align-items: center; gap: 10px;
-      padding: 18px 32px;
-      border: 1px solid var(--line);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
-      letter-spacing: 0.15em; text-transform: uppercase;
-      color: var(--text);
-      transition: all 0.2s;
-    }
-    .btn-hero-ghost:hover {
-      border-color: var(--gold);
-      color: var(--gold);
-    }
-
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .hero-meta {
-      display: grid; grid-template-columns: repeat(3, 1fr);
-      gap: 32px;
-      margin-top: 100px; padding-top: 36px;
-      border-top: 1px solid var(--line-soft);
-      animation: fadeUp 0.8s 0.5s both;
-    }
-    .hero-meta-item .num {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 38px;
-      font-weight: 400;
-      color: var(--gold);
-      line-height: 1;
-      margin-bottom: 8px;
-    }
-    .hero-meta-item .label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.2em; text-transform: uppercase;
-      color: var(--text-dim);
-    }
-
-    /* ============================================
-       SECTIONS
-       ============================================ */
-    .section {
-      padding: 120px 0;
-      position: relative;
-    }
-
-    .section-head {
-      display: flex; align-items: flex-end; justify-content: space-between;
-      margin-bottom: 64px;
-      gap: 24px; flex-wrap: wrap;
-    }
-    .section-eyebrow {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      letter-spacing: 0.2em; text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 20px;
-      display: flex; align-items: center; gap: 14px;
-    }
-    .section-eyebrow .num { color: var(--text-faint); }
-    .section-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 400;
-      font-size: clamp(28px, 3.8vw, 52px);
-      line-height: 1;
-      letter-spacing: -0.01em;
-      max-width: 780px;
-    }
-    .section-title em { color: var(--gold); font-style: italic; }
-    .section-sub {
-      max-width: 360px;
-      color: var(--text-dim);
-      font-size: 15px; line-height: 1.7;
-      flex-shrink: 0;
-    }
-
-    /* ============================================
-       CATEGORY FILTERS
-       ============================================ */
-    .filters {
-      display: flex; flex-wrap: wrap; gap: 8px;
-      margin-bottom: 48px;
-      padding-bottom: 32px;
-      border-bottom: 1px solid var(--line-soft);
-    }
-    .filter-btn {
-      padding: 12px 22px;
-      border: 1px solid var(--line);
-      background: transparent;
-      color: var(--text-dim);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      letter-spacing: 0.15em; text-transform: uppercase;
-      transition: all 0.2s;
-      border-radius: 999px;
-    }
-    .filter-btn:hover {
-      border-color: var(--text-dim);
-      color: var(--text);
-    }
-    .filter-btn.active {
-      background: var(--gold);
-      color: #000;
-      border-color: var(--gold);
-    }
-
-    /* ============================================
-       PRODUCTS GRID
-       ============================================ */
-    .products-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-    }
-    @media (min-width: 480px) {
-      .products-grid {
-        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-        gap: 20px;
-      }
-    }
-    @media (min-width: 768px) {
-      .products-grid {
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 32px;
-      }
-    }
-
-    .product {
-      background: var(--bg-card);
-      border: 1px solid var(--line-soft);
-      overflow: hidden;
-      transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-      display: flex; flex-direction: column;
-      position: relative;
-    }
-    .product:hover {
-      border-color: var(--gold);
-      transform: translateY(-6px);
-      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-    }
-
-    .product-img {
-      aspect-ratio: 1/1;
-      background: #ffffff;
-      display: flex; align-items: center; justify-content: center;
-      position: relative; overflow: hidden;
-    }
-    .product-img img {
-      width: 100%; height: 100%; object-fit: contain;
-      transition: transform 0.6s;
-      mix-blend-mode: multiply;
-      background: #ffffff;
-      padding: 8px;
-    }
-    .product:hover .product-img img { transform: scale(1.05); }
-    .product-img-placeholder {
-      width: 50%; max-width: 120px;
-      color: var(--gold);
-      opacity: 0.4;
-    }
-
-    .product-badge {
-      position: absolute;
-      top: 14px; left: 14px;
-      background: var(--gold);
-      color: #000;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 9px; font-weight: 700;
-      letter-spacing: 0.18em; text-transform: uppercase;
-      padding: 6px 10px;
-      z-index: 2;
-    }
-
-    .product-info {
-      padding: 24px;
-      flex: 1;
-      display: flex; flex-direction: column;
-    }
-    .product-cat {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.2em; text-transform: uppercase;
-      color: var(--text-faint);
-      margin-bottom: 10px;
-    }
-    .product-name {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 22px;
-      font-weight: 500;
-      line-height: 1.25;
-      margin-bottom: 16px;
-      flex: 1;
-      letter-spacing: -0.01em;
-    }
-    .product-price-row {
-      display: flex; align-items: baseline;
-      justify-content: space-between;
-      margin-bottom: 18px;
-      gap: 12px;
-    }
-    .product-price {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 28px;
-      font-weight: 500;
-      color: var(--gold);
-      line-height: 1;
-    }
-    .product-price small {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 9px;
-      color: var(--text-dim);
-      letter-spacing: 0.1em;
-      display: block;
-      margin-top: 6px;
-      text-transform: uppercase;
-    }
-
-    .product-cta {
-      display: inline-flex; align-items: center; justify-content: center;
-      gap: 8px;
-      width: 100%;
-      padding: 14px 16px;
-      background: transparent;
-      border: 1px solid var(--line);
-      color: var(--text);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px; font-weight: 600;
-      letter-spacing: 0.2em; text-transform: uppercase;
-      transition: all 0.2s;
-    }
-    .product-cta:hover {
-      background: var(--gold);
-      color: #000;
-      border-color: var(--gold);
-    }
-    .product-cta.added {
-      background: var(--gold);
-      color: #000;
-      border-color: var(--gold);
-    }
-
-    .product-esgotado {
-      opacity: 0.6;
-    }
-    .product-esgotado .product-img img {
-      filter: grayscale(60%);
-    }
-
-    .empty-state {
-      grid-column: 1 / -1;
-      text-align: center;
-      padding: 80px 24px;
-      color: var(--text-dim);
-    }
-    .empty-state p {
-      font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-size: 22px;
-    }
-
-    .loading {
-      grid-column: 1 / -1;
-      text-align: center;
-      padding: 80px 24px;
-      color: var(--text-dim);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
-    }
-
-    /* ============================================
-       SOBRE
-       ============================================ */
-    #sobre {
-      background: linear-gradient(180deg, var(--bg) 0%, #050505 100%);
-      border-top: 1px solid var(--line-soft);
-      border-bottom: 1px solid var(--line-soft);
-    }
-    .about-grid {
-      display: grid; grid-template-columns: 1fr;
-      gap: 64px; align-items: center;
-    }
-    @media (min-width: 900px) {
-      .about-grid { grid-template-columns: 1fr 1fr; gap: 80px; }
-    }
-    .about-text h2 {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 400;
-      font-size: clamp(26px, 3.5vw, 44px);
-      line-height: 1;
-      margin-bottom: 36px;
-      letter-spacing: -0.01em;
-    }
-    .about-text h2 em { color: var(--gold); font-style: italic; }
-    .about-text p {
-      color: var(--text-dim);
-      font-size: 16px;
-      line-height: 1.8;
-      margin-bottom: 20px;
-    }
-    .about-text p strong { color: var(--text); font-weight: 500; }
-
-    .about-visual {
-      position: relative;
-      aspect-ratio: 4/5;
-      background:
-        radial-gradient(ellipse at 30% 30%, var(--gold-glow) 0%, transparent 50%),
-        linear-gradient(135deg, #111 0%, #0a0a0a 100%);
-      border: 1px solid var(--line-soft);
-      overflow: hidden;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .about-mark-geo {
-      width: 200px; height: 200px;
-      border: 1px solid var(--gold);
-      border-radius: 50%;
-      position: relative;
-      opacity: 0.4;
-      animation: pulse-ring 5s ease-in-out infinite;
-    }
-    .about-mark-geo::before {
-      content: '';
-      position: absolute; inset: 20px;
-      border: 1px solid var(--gold);
-      border-radius: 50%;
-      opacity: 0.5;
-    }
-    @keyframes pulse-ring {
-      0%, 100% { box-shadow: 0 0 0 0 var(--gold-glow); }
-      50% { box-shadow: 0 0 40px 10px transparent; }
-    }
-
-    .about-features {
-      display: grid; grid-template-columns: repeat(2, 1fr);
-      gap: 24px;
-      margin-top: 40px; padding-top: 40px;
-      border-top: 1px solid var(--line-soft);
-    }
-    .feature .num {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 42px;
-      font-weight: 500;
-      color: var(--gold);
-      line-height: 1;
-      margin-bottom: 8px;
-    }
-    .feature .label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.2em; text-transform: uppercase;
-      color: var(--text-dim);
-    }
-
-    /* ============================================
-       ALPHA HEMP BRASIL
-       ============================================ */
-    .hemp-section {
-      padding: 100px 0;
-      background: #f8f9f7;
-      border-top: 1px solid #e0e5df;
-      border-bottom: 1px solid #e0e5df;
-      position: relative;
-      overflow: hidden;
-    }
-    .hemp-section::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 50%;
-      transform: translateX(-50%);
-      width: 1px; height: 60px;
-      background: linear-gradient(to bottom, transparent, #2d5a2d);
-    }
-    .hemp-grid {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      max-width: 720px;
-      margin: 0 auto;
-      gap: 0;
-    }
-    @media (max-width: 900px) {
-      .hemp-grid { gap: 0; }
-    }
-    .hemp-badge { display: none; }
-    .hemp-visual { display: none; }
-    .hemp-content { width: 100%; }
-    .hemp-eyebrow {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 9px;
-      letter-spacing: 0.35em; text-transform: uppercase;
-      color: #2d5a2d;
-      margin-bottom: 28px;
-      display: flex; align-items: center; justify-content: center; gap: 16px;
-    }
-    .hemp-eyebrow::before,
-    .hemp-eyebrow::after {
-      content: ''; width: 32px; height: 1px;
-      background: #2d5a2d;
-      opacity: 0.5;
-    }
-    .hemp-name {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(32px, 4vw, 52px);
-      font-weight: 400;
-      letter-spacing: 0.04em;
-      color: #1a2e1a;
-      margin-bottom: 6px;
-      line-height: 1;
-    }
-    .hemp-name em {
-      font-style: italic;
-      color: #3a7a3a;
-    }
-    .hemp-subtitle {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: #7a9a7a;
-      margin-bottom: 40px;
-    }
-    .hemp-divider {
-      width: 40px; height: 1px;
-      background: #3a7a3a;
-      margin: 0 auto 40px;
-      opacity: 0.4;
-    }
-    .hemp-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(20px, 2.5vw, 28px);
-      font-weight: 400;
-      font-style: italic;
-      line-height: 1.4;
-      color: #2a3a2a;
-      margin-bottom: 20px;
-      letter-spacing: 0.01em;
-    }
-    .hemp-title em { color: #3a7a3a; font-style: normal; font-weight: 500; }
-    .hemp-text {
-      color: #5a6e5a;
-      font-size: 15px;
-      line-height: 1.85;
-      max-width: 580px;
-      margin: 0 auto 32px;
-    }
-    .hemp-tags {
-      display: flex; flex-wrap: wrap; gap: 8px;
-      margin-bottom: 36px;
-      justify-content: center;
-    }
-    .hemp-tags span {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 9px;
-      letter-spacing: 0.2em; text-transform: uppercase;
-      color: #3a7a3a;
-      padding: 7px 14px;
-      border: 1px solid #c0d5c0;
-      background: #f0f5f0;
-    }
-    .hemp-cta {
-      display: inline-flex; align-items: center; gap: 10px;
-      padding: 16px 36px;
-      background: #2d5a2d;
-      border: 1px solid #2d5a2d;
-      color: #f0f5f0;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px; font-weight: 600;
-      letter-spacing: 0.2em; text-transform: uppercase;
-      transition: all 0.3s;
-      text-decoration: none;
-    }
-    .hemp-cta:hover {
-      background: #1a3a1a;
-      border-color: #1a3a1a;
-      color: #fff;
-      box-shadow: 0 8px 30px rgba(45,90,45,0.2);
-    }
-    .hemp-cta svg { opacity: 0.7; }
-
-    /* ============================================
-       FOOTER
-       ============================================ */
-    footer {
-      background: #050505;
-      border-top: 1px solid var(--line-soft);
-      padding: 80px 0 32px;
-    }
-    .footer-grid {
-      display: grid; grid-template-columns: 1fr;
-      gap: 48px;
-      margin-bottom: 48px;
-    }
-    @media (min-width: 700px) {
-      .footer-grid { grid-template-columns: 2fr 1fr 1fr; }
-    }
-    .footer-brand .logo { margin-bottom: 24px; }
-    .footer-brand p {
-      color: var(--text-dim);
-      font-size: 14px;
-      line-height: 1.8;
-      max-width: 360px;
-    }
-    .footer-col h4 {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.2em; text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 24px;
-    }
-    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
-    .footer-col a {
-      color: var(--text-dim);
-      font-size: 14px;
-      transition: color 0.2s;
-    }
-    .footer-col a:hover { color: var(--gold); }
-    .footer-bottom {
-      padding-top: 32px;
-      border-top: 1px solid var(--line-soft);
-      display: flex; justify-content: space-between; align-items: center;
-      flex-wrap: wrap; gap: 16px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.15em; text-transform: uppercase;
-      color: var(--text-faint);
-    }
-    .footer-bottom .warning { color: var(--gold); }
-
-    /* ============================================
-       CART DRAWER
-       ============================================ */
-    .cart-overlay {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.6);
-      backdrop-filter: blur(4px);
-      z-index: 998;
-      opacity: 0; pointer-events: none;
-      transition: opacity 0.3s;
-    }
-    .cart-overlay.open {
-      opacity: 1; pointer-events: auto;
-    }
-
-    .cart-drawer {
-      position: fixed; top: 0; right: 0;
-      width: 100%; max-width: 460px;
-      height: 100vh;
-      background: var(--bg-soft);
-      border-left: 1px solid var(--line);
-      z-index: 999;
-      transform: translateX(100%);
-      transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-      display: flex; flex-direction: column;
-    }
-    .cart-drawer.open { transform: translateX(0); }
-
-    .cart-header {
-      padding: 28px 28px 20px;
-      border-bottom: 1px solid var(--line-soft);
-      display: flex; justify-content: space-between; align-items: center;
-    }
-    .cart-header h3 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 28px;
-      font-weight: 500;
-    }
-    .cart-header h3 em { color: var(--gold); font-style: italic; }
-    .cart-close {
-      width: 36px; height: 36px;
-      border: 1px solid var(--line);
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      transition: all 0.2s;
-    }
-    .cart-close:hover {
-      border-color: var(--gold); color: var(--gold);
-    }
-
-    .cart-items {
-      flex: 1;
-      overflow-y: auto;
-      padding: 16px 28px;
-      min-height: 0; /* crítico: impede que empurre o footer */
-    }
-    .cart-empty {
-      text-align: center;
-      padding: 80px 24px;
-      color: var(--text-dim);
-    }
-    .cart-empty p {
-      font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-size: 18px;
-      margin-bottom: 8px;
-    }
-    .cart-empty .mono {
-      font-size: 10px; color: var(--text-faint);
-    }
-
-    .cart-item {
-      display: flex; gap: 16px;
-      padding: 20px 0;
-      border-bottom: 1px solid var(--line-soft);
-    }
-    .cart-item-img {
-      width: 70px; height: 70px;
-      background: var(--bg-card);
-      border: 1px solid var(--line-soft);
-      flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center;
-      overflow: hidden;
-    }
-    .cart-item-img img { width: 100%; height: 100%; object-fit: cover; }
-    .cart-item-img svg { width: 50%; opacity: 0.4; color: var(--gold); }
-    .cart-item-info {
-      flex: 1; display: flex; flex-direction: column; justify-content: space-between;
-    }
-    .cart-item-name {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 17px;
-      font-weight: 500;
-      line-height: 1.3;
-      margin-bottom: 4px;
-    }
-    .cart-item-cat {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 9px;
-      letter-spacing: 0.15em; text-transform: uppercase;
-      color: var(--text-faint);
-      margin-bottom: 8px;
-    }
-    .cart-item-bottom {
-      display: flex; justify-content: space-between; align-items: center;
-    }
-    .cart-qty {
-      display: flex; align-items: center;
-      border: 1px solid var(--line);
-    }
-    .cart-qty button {
-      width: 28px; height: 28px;
-      color: var(--text-dim);
-      transition: color 0.2s;
-    }
-    .cart-qty button:hover { color: var(--gold); }
-    .cart-qty span {
-      width: 32px; text-align: center;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
-      color: var(--text);
-    }
-    .cart-item-price {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 18px;
-      font-weight: 500;
-      color: var(--gold);
-    }
-    .cart-item-remove {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 9px;
-      letter-spacing: 0.15em; text-transform: uppercase;
-      color: var(--text-faint);
-      margin-top: 6px;
-      display: inline-block;
-      transition: color 0.2s;
-    }
-    .cart-item-remove:hover { color: #ff6b6b; }
-
-    .cart-footer {
-      padding: 24px 28px;
-      border-top: 1px solid var(--line-soft);
-      background: var(--bg);
-      flex-shrink: 0; /* nunca encolhe — sempre visível */
-      padding-bottom: max(24px, env(safe-area-inset-bottom));
-    }
-    .cart-total-row {
-      display: flex; justify-content: space-between; align-items: baseline;
-      margin-bottom: 6px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      color: var(--text-dim);
-      letter-spacing: 0.1em; text-transform: uppercase;
-    }
-    .cart-total-final {
-      display: flex; justify-content: space-between; align-items: baseline;
-      margin: 16px 0 24px;
-      padding-top: 16px;
-      border-top: 1px solid var(--line-soft);
-    }
-    .cart-total-final .label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      letter-spacing: 0.2em; text-transform: uppercase;
-      color: var(--text);
-    }
-    .cart-total-final .value {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 36px;
-      font-weight: 500;
-      color: var(--gold);
-      line-height: 1;
-    }
-    .cart-checkout-btn {
-      width: 100%;
-      padding: 18px;
-      background: var(--gold);
-      color: #000;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12px; font-weight: 700;
-      letter-spacing: 0.2em; text-transform: uppercase;
-      transition: all 0.2s;
-      border: none; cursor: pointer;
-    }
-    .cart-checkout-btn:hover {
-      background: var(--text);
-      box-shadow: 0 8px 30px var(--gold-glow);
-    }
-    .cart-checkout-btn:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-    }
-
-    /* ============================================
-       CHECKOUT MODAL
-       ============================================ */
-    /* ============================================
-       MODAL DE PRODUTO (link compartilhável)
-       ============================================ */
-    .product-modal {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.92);
-      backdrop-filter: blur(8px);
-      z-index: 999;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      overflow-y: auto;
-      overflow-x: hidden;
-    }
-    .product-modal.open { display: flex; }
-    .product-modal-box {
-      max-width: 460px; width: 100%;
-      background: var(--bg-soft);
-      border: 1px solid var(--line);
-      max-height: 90vh;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      position: relative;
-    }
-    .product-modal-close {
-      position: absolute; top: 12px; right: 12px;
-      width: 38px; height: 38px;
-      border: 1px solid rgba(201,169,97,0.4);
-      background: rgba(0,0,0,0.7);
-      color: var(--gold);
-      font-size: 22px; line-height: 1;
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer;
-      transition: all 0.2s;
-      z-index: 10;
-      border-radius: 0;
-      padding: 0;
-      font-family: inherit;
-    }
-    .product-modal-close:hover {
-      border-color: var(--gold);
-      background: rgba(0,0,0,0.9);
-    }
-    .product-modal-img {
-      width: 100%;
-      height: 280px;
-      max-height: 38vh;
-      background: #fff;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-      overflow: hidden;
-    }
-    .product-modal-img img {
-      width: 100%; height: 100%;
-      object-fit: contain;
-    }
-    .product-modal-body {
-      padding: 22px 24px 24px;
-      overflow-y: auto;
-      flex: 1;
-      min-height: 0;
-    }
-    .product-modal-cat {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--text-dim);
-      margin-bottom: 8px;
-    }
-    .product-modal-name {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 28px;
-      font-weight: 500;
-      line-height: 1.15;
-      margin-bottom: 12px;
-      color: var(--text);
-    }
-    .product-modal-price {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 32px;
-      font-weight: 500;
-      color: var(--gold);
-      margin-bottom: 4px;
-    }
-    .product-modal-price small {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.18em;
-      color: var(--text-dim);
-      margin-left: 8px;
-      vertical-align: middle;
-    }
-    .product-modal-desc {
-      font-size: 13px;
-      color: var(--text-dim);
-      line-height: 1.6;
-      margin: 16px 0 20px;
-      white-space: pre-wrap;
-    }
-    .product-modal-actions {
-      display: flex; gap: 10px;
-      flex-direction: column;
-      margin-top: 18px;
-    }
-    .product-modal-actions .btn { width: 100%; padding: 15px; min-height: 50px; }
-    .product-modal-share {
-      display: flex; align-items: center; justify-content: center; gap: 8px;
-      padding: 11px;
-      background: transparent;
-      border: 1px solid var(--line);
-      color: var(--text-dim);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .product-modal-share:hover {
-      border-color: var(--gold);
-      color: var(--gold);
-    }
-
-    /* Botão de compartilhar discreto no card de produto */
-    .product-share-btn {
-      position: absolute;
-      top: 8px; left: 8px;
-      width: 32px; height: 32px;
-      background: rgba(0,0,0,0.6);
-      backdrop-filter: blur(4px);
-      border: 1px solid rgba(201,169,97,0.3);
-      color: var(--gold);
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer;
-      opacity: 0;
-      transition: opacity 0.2s, border-color 0.2s;
-      z-index: 2;
-    }
-    .product:hover .product-share-btn,
-    .product-share-btn:focus { opacity: 1; }
-    .product-share-btn:hover { border-color: var(--gold); background: rgba(0,0,0,0.85); }
-    @media (hover: none) {
-      .product-share-btn { opacity: 0.85; }
-    }
-    .product { position: relative; }
-
-    /* Mobile: modal full-screen, foto menor proporcional */
-    @media (max-width: 640px) {
-      .product-modal { padding: 0; align-items: flex-start; }
-      .product-modal-box {
-        max-width: 100%;
-        max-height: 100svh;
-        min-height: 100svh;
-        border: none;
-      }
-      .product-modal-img { height: 240px; max-height: 35vh; }
-      .product-modal-name { font-size: 24px; }
-      .product-modal-price { font-size: 28px; }
-      .product-modal-body { padding: 18px 18px 28px; padding-bottom: max(28px, env(safe-area-inset-bottom)); }
-    }
-
-    .checkout-modal {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.92);
-      backdrop-filter: blur(8px);
-      z-index: 1000;
-      display: none;
-      align-items: flex-start;
-      justify-content: center;
-      padding: 0;
-      overflow: hidden;
-    }
-    .checkout-modal.open { display: flex; }
-
-    .checkout-box {
-      max-width: 480px; width: 100%;
-      background: var(--bg-soft);
-      border: 1px solid var(--line);
-      min-height: 100svh;
-      max-height: 100svh;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-    /* Header sticky */
-    .checkout-head {
-      flex-shrink: 0;
-      padding: 20px 24px 16px;
-      border-bottom: 1px solid var(--line-soft);
-      background: var(--bg-soft);
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 16px;
-    }
-    .checkout-head-text { flex: 1; min-width: 0; }
-    .checkout-close {
-      width: 36px; height: 36px;
-      flex-shrink: 0;
-      border: 1px solid var(--line);
-      background: transparent;
-      color: var(--text-dim);
-      font-size: 20px;
-      line-height: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .checkout-close:hover {
-      border-color: var(--gold);
-      color: var(--gold);
-    }
-    /* Body scrollável */
-    .checkout-body {
-      flex: 1;
-      overflow-y: auto;
-      overflow-x: hidden;
-      padding: 20px 24px;
-      -webkit-overflow-scrolling: touch;
-    }
-    /* Footer sticky com total + botão */
-    .checkout-foot {
-      flex-shrink: 0;
-      padding: 14px 20px 18px;
-      border-top: 1px solid var(--line-soft);
-      background: var(--bg-soft);
-      padding-bottom: max(18px, env(safe-area-inset-bottom));
-    }
-    .checkout-foot-total {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      margin-bottom: 12px;
-    }
-    .checkout-foot-total .label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--text-dim);
-    }
-    .checkout-foot-total .value {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 28px;
-      font-weight: 500;
-      color: var(--gold);
-    }
-    .checkout-foot-actions {
-      display: flex;
-      gap: 10px;
-    }
-    .checkout-foot-actions .btn {
-      flex: 1;
-      padding: 16px 18px;
-      min-height: 52px;
-    }
-    .checkout-foot-actions .btn-ghost {
-      flex: 0 0 auto;
-      padding: 16px 22px;
-    }
-    .checkout-head h3 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 24px;
-      font-weight: 500;
-      margin-bottom: 4px;
-      line-height: 1.1;
-    }
-    .checkout-head h3 em { color: var(--gold); font-style: italic; }
-    .checkout-head .sub {
-      color: var(--text-dim);
-      font-size: 12px;
-    }
-
-    .form-field {
-      margin-bottom: 14px;
-    }
-    .form-field label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.2em; text-transform: uppercase;
-      color: var(--gold);
-      display: block;
-      margin-bottom: 6px;
-    }
-    .form-field input,
-    .form-field textarea {
-      width: 100%;
-      background: var(--bg);
-      border: 1px solid var(--line);
-      color: var(--text);
-      padding: 10px 14px;
-      font-family: 'Inter', sans-serif;
-      font-size: 14px;
-      transition: border-color 0.2s;
-    }
-    .form-field input:focus,
-    .form-field textarea:focus {
-      outline: none;
-      border-color: var(--gold);
-    }
-    .form-field textarea {
-      min-height: 60px;
-      resize: vertical;
-    }
-
-    .checkout-summary {
-      background: var(--bg);
-      padding: 20px;
-      margin: 24px 0;
-      border: 1px solid var(--line-soft);
-    }
-    .checkout-summary h4 {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.2em; text-transform: uppercase;
-      color: var(--text-dim);
-      margin-bottom: 12px;
-    }
-    .summary-line {
-      display: flex; justify-content: space-between;
-      font-size: 13px;
-      padding: 6px 0;
-      color: var(--text-dim);
-    }
-    .summary-line strong {
-      color: var(--text); font-weight: 500;
-    }
-    .summary-total {
-      display: flex; justify-content: space-between; align-items: baseline;
-      padding-top: 12px;
-      margin-top: 12px;
-      border-top: 1px solid var(--line-soft);
-    }
-    .summary-total .label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      letter-spacing: 0.15em; text-transform: uppercase;
-    }
-    .summary-total .value {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 28px;
-      font-weight: 500;
-      color: var(--gold);
-    }
-
-    .checkout-actions {
-      display: none;
-    }
-
-    /* ============================================
-       SUCCESS MODAL
-       ============================================ */
-    .success-modal {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.95);
-      backdrop-filter: blur(8px);
-      z-index: 1001;
-      display: none;
-      align-items: center; justify-content: center;
-      padding: 24px;
-    }
-    .success-modal.open { display: flex; }
-    .success-box {
-      max-width: 480px; width: 100%;
-      background: var(--bg-soft);
-      border: 1px solid var(--gold);
-      padding: 56px 32px;
-      text-align: center;
-    }
-    .success-icon {
-      width: 64px; height: 64px;
-      border: 1px solid var(--gold);
-      border-radius: 50%;
-      margin: 0 auto 24px;
-      display: flex; align-items: center; justify-content: center;
-      color: var(--gold);
-    }
-    .success-box h3 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 36px;
-      font-weight: 500;
-      margin-bottom: 12px;
-    }
-    .success-box h3 em { color: var(--gold); font-style: italic; }
-    .success-box p {
-      color: var(--text-dim);
-      font-size: 14px;
-      line-height: 1.7;
-      margin-bottom: 24px;
-    }
-    .order-number {
-      background: var(--bg);
-      padding: 16px;
-      margin: 20px 0 28px;
-      border: 1px solid var(--line);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 14px;
-      color: var(--gold);
-      letter-spacing: 0.2em;
-    }
-
-    /* ============================================
-       FLOATING WHATSAPP
-       ============================================ */
-    /* Payment options */
-    .payment-options {
-      display: flex; flex-direction: column; gap: 10px;
-    }
-    .payment-opt { cursor: pointer; }
-    .payment-opt input { display: none; }
-    .payment-opt-box {
-      display: flex; align-items: center; gap: 14px;
-      padding: 14px 16px;
-      background: var(--bg);
-      border: 1px solid var(--line);
-      transition: all 0.2s;
-      min-width: 0;
-    }
-    .payment-opt-box > span { min-width: 0; }
-    .payment-opt-box strong { font-size: 14px; font-weight: 600; flex: 1; min-width: 0; }
-    .payment-opt-box small { color: var(--text-dim); font-size: 12px; }
-    .payment-opt input:checked + .payment-opt-box {
-      border-color: var(--gold);
-      background: rgba(201,169,97,0.08);
-    }
-    .payment-opt-box svg { color: var(--gold); flex-shrink: 0; }
-
-    .float-wa {
-      position: fixed;
-      bottom: 24px; right: 24px;
-      width: 58px; height: 58px;
-      background: var(--gold);
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 8px 30px var(--gold-glow);
-      z-index: 90;
-      transition: transform 0.2s;
-    }
-    .float-wa:hover { transform: scale(1.1); }
-    .float-wa svg { width: 28px; height: 28px; color: #000; }
-    @keyframes slideUp{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
+```
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  line-height: 1.5;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; text-decoration: none; }
+img { max-width: 100%; display: block; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+
+.container { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+.serif { font-family: 'Cormorant Garamond', serif; }
+.mono { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; }
+
+.btn {
+  padding: 14px 28px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; font-weight: 500;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  transition: all 0.2s;
+  cursor: pointer;
+  border: none;
+}
+.btn-gold {
+  background: var(--gold);
+  color: #000;
+}
+.btn-gold:hover {
+  background: var(--text);
+  box-shadow: 0 0 30px var(--gold-glow);
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--text-dim);
+  border: 1px solid var(--line);
+}
+.btn-ghost:hover {
+  border-color: var(--text-dim);
+  color: var(--text);
+}
+
+/* ============================================
+   ANNOUNCEMENT
+   ============================================ */
+.announcement {
+  background: #000;
+  border-bottom: 1px solid var(--line-soft);
+  color: var(--text-dim);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; font-weight: 400;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  padding: 10px 0;
+  overflow: hidden; white-space: nowrap;
+}
+.announcement-track {
+  display: inline-flex;
+  gap: 60px;
+  animation: marquee 50s linear infinite;
+}
+.announcement-track span::before {
+  content: '◆';
+  margin-right: 60px;
+  color: var(--gold);
+}
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* ============================================
+   NAV
+   ============================================ */
+.nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(10, 10, 10, 0.92);
+  backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--line-soft);
+}
+.nav-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 22px 24px;
+  max-width: var(--maxw); margin: 0 auto;
+}
+.logo { display: flex; align-items: center; }
+.logo-img {
+  height: 48px;
+  width: auto;
+  filter: drop-shadow(0 0 8px rgba(201,169,97,0.3));
+  transition: filter 0.3s;
+}
+.logo-img:hover {
+  filter: drop-shadow(0 0 14px rgba(201,169,97,0.6));
+}
+
+.nav-links {
+  display: flex; gap: 36px; align-items: center;
+}
+.nav-links a {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--text-dim);
+  transition: color 0.2s;
+  position: relative;
+}
+.nav-links a:hover { color: var(--gold); }
+.nav-links a.cart-btn {
+  color: var(--text);
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 16px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  transition: all 0.2s;
+}
+.nav-links a.cart-btn:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+.cart-count {
+  background: var(--gold);
+  color: #000;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+@media (max-width: 768px) {
+  .nav-links a:not(.cart-btn) { display: none; }
+}
+
+/* ============================================
+   MOBILE — otimizado para compra confortável
+   ============================================ */
+@media (max-width: 640px) {
+
+  /* Nav */
+  .nav-inner { padding: 14px 16px; }
+  .logo-img { height: 40px; }
+
+  /* Carrinho — botão maior e mais visível */
+  .nav-links a.cart-btn {
+    padding: 10px 18px;
+    font-size: 13px;
+    gap: 10px;
+    border-radius: 999px;
+  }
+  .cart-count {
+    width: 24px; height: 24px;
+    font-size: 12px;
+    font-weight: 800;
+  }
+
+  /* Hero */
+  .hero { padding: 36px 0 48px; }
+  .hero h1 {
+    font-size: clamp(34px, 9vw, 52px);
+    margin-bottom: 20px;
+    line-height: 1.05;
+  }
+  .hero-lead {
+    font-size: 16px;
+    line-height: 1.7;
+    margin-bottom: 32px;
+  }
+  .hero-eyebrow { font-size: 10px; margin-bottom: 24px; }
+  .btn-hero {
+    width: 100%;
+    justify-content: center;
+    padding: 18px 24px;
+    font-size: 13px;
+  }
+  .hero-meta {
+    grid-template-columns: repeat(3,1fr);
+    gap: 16px;
+    margin-top: 48px;
+    padding-top: 28px;
+  }
+  .hero-meta-item .num { font-size: 32px; }
+  .hero-meta-item .label { font-size: 9px; }
+
+  /* Seção vitrine */
+  .section { padding: 48px 0 60px; }
+  .section-head { margin-bottom: 36px; gap: 16px; }
+  .section-title { font-size: clamp(28px, 7vw, 40px); }
+  .section-sub { display: none; }
+  .section-eyebrow { font-size: 10px; margin-bottom: 12px; }
+
+  /* Filtros de categoria */
+  .filters {
+    gap: 8px;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-right: 16px;
+  }
+  .filters::-webkit-scrollbar { display: none; }
+  .filter-btn {
+    padding: 10px 18px;
+    font-size: 11px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    min-height: 40px;
+  }
+
+  /* Busca */
+  #searchInput { font-size: 15px; padding: 14px 16px 14px 44px; }
+
+  /* Grid de produtos — 1 coluna no mobile para ver melhor */
+  .products-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  /* Card de produto maior e mais confortável */
+  .product { flex-direction: row; min-height: 130px; }
+  .product-img {
+    width: 130px;
+    min-width: 130px;
+    aspect-ratio: unset;
+    height: auto;
+    border-right: 1px solid var(--line-soft);
+  }
+  .product-info {
+    padding: 16px;
+    flex: 1;
+    justify-content: space-between;
+  }
+  .product-cat { font-size: 10px; margin-bottom: 6px; }
+  .product-name {
+    font-size: 18px;
+    margin-bottom: 10px;
+    line-height: 1.2;
+  }
+  .product-price { font-size: 26px; }
+  .product-price small { font-size: 10px; }
+  .product-cta {
+    padding: 12px 16px;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    min-height: 44px;
+  }
+  .product-badge { font-size: 8px; padding: 4px 8px; }
+
+  /* Carrinho drawer — full width, confortável */
+  .cart-drawer {
+    max-width: 100%;
+    width: 100%;
+  }
+  .cart-header { padding: 20px 20px 16px; }
+  .cart-header h3 { font-size: 26px; }
+  .cart-items { padding: 12px 16px; min-height: 0; }
+
+  /* Item do carrinho maior */
+  .cart-item { gap: 14px; padding: 16px 0; }
+  .cart-item-img { width: 80px; height: 80px; }
+  .cart-item-name { font-size: 18px; }
+  .cart-item-cat { font-size: 10px; }
+  .cart-qty button {
+    width: 40px; height: 40px;
+    font-size: 18px;
+  }
+  .cart-qty span {
+    width: 40px;
+    font-size: 16px;
+  }
+  .cart-item-price { font-size: 20px; }
+  .cart-item-remove { font-size: 11px; }
+  .cart-footer { padding: 16px 16px 24px; }
+  .cart-total-row { font-size: 12px; }
+  .cart-total-final .value { font-size: 32px; }
+  .cart-checkout-btn {
+    padding: 18px;
+    font-size: 13px;
+    min-height: 56px;
+    letter-spacing: 0.15em;
+  }
+
+  /* Hemp section */
+  .hemp-section { padding: 56px 0; }
+  .hemp-name { font-size: clamp(30px, 8vw, 44px); }
+  .hemp-title { font-size: 18px; }
+  .hemp-text { font-size: 14px; }
+  .hemp-cta {
+    width: 100%;
+    justify-content: center;
+    padding: 16px 24px;
+    font-size: 11px;
+  }
+
+  /* Footer */
+  .footer-grid { grid-template-columns: 1fr; gap: 28px; }
+  .footer-bottom { flex-direction: column; text-align: center; gap: 8px; }
+
+  /* Announcement */
+  .announcement { font-size: 9px; }
+
+  /* Checkout — mobile (estrutura head/body/foot) */
+  .checkout-box {
+    max-width: 100%;
+    margin: 0;
+    border-radius: 0;
+    border: none;
+  }
+  .checkout-head { padding: 16px 18px 14px; }
+  .checkout-head h3 { font-size: 22px; }
+  .checkout-head .sub { font-size: 11px; }
+  .checkout-body { padding: 16px 18px 24px; }
+  .checkout-body form { min-width: 0; }
+  .form-field textarea { resize: none; }
+  .checkout-foot { padding: 12px 16px; }
+  .checkout-foot-total .value { font-size: 26px; }
+  .checkout-foot-actions .btn { padding: 14px 16px; min-height: 50px; font-size: 11px; }
+  .checkout-foot-actions .btn-ghost { padding: 14px 18px; }
+  /* Cards de tipo de entrega/pagamento — encolher padding e gap */
+  .payment-opt-box { padding: 12px 12px; gap: 10px; }
+  .payment-opt-box small { font-size: 11px; line-height: 1.4; }
+  .payment-opt-box > span:last-child { flex-shrink: 0; }
+}
+
+/* ============================================
+   HERO
+   ============================================ */
+.hero {
+  position: relative;
+  padding: 48px 0 64px;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 10%; right: -10%;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, var(--gold-glow) 0%, transparent 60%);
+  filter: blur(80px);
+  pointer-events: none;
+}
+.hero-grid {
+  max-width: var(--maxw); margin: 0 auto; padding: 0 24px;
+  position: relative; z-index: 1;
+}
+
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 14px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--gold);
+  margin-bottom: 32px;
+  animation: fadeUp 0.8s 0.1s both;
+}
+.hero-eyebrow::before {
+  content: ''; width: 32px; height: 1px;
+  background: var(--gold);
+}
+
+.hero h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 400;
+  font-size: clamp(24px, 3.2vw, 48px);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  margin-bottom: 24px;
+  animation: fadeUp 0.8s 0.2s both;
+}
+.hero h1 em {
+  font-style: italic;
+  color: var(--gold);
+}
+.hero h1 .light {
+  font-weight: 300;
+}
+
+.hero-lead {
+  max-width: 580px;
+  font-size: 17px;
+  color: var(--text-dim);
+  line-height: 1.7;
+  margin-bottom: 44px;
+  animation: fadeUp 0.8s 0.3s both;
+}
+.hero-lead strong { color: var(--text); font-weight: 500; }
+
+.hero-actions {
+  display: flex; flex-wrap: wrap; gap: 12px;
+  animation: fadeUp 0.8s 0.4s both;
+}
+
+.btn-hero {
+  display: inline-flex; align-items: center; gap: 12px;
+  background: var(--gold);
+  color: #000;
+  padding: 18px 36px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; font-weight: 600;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  transition: all 0.3s;
+  position: relative; overflow: hidden;
+}
+.btn-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: var(--text);
+  transform: translateX(-100%);
+  transition: transform 0.3s;
+}
+.btn-hero > * { position: relative; z-index: 1; }
+.btn-hero:hover::before { transform: translateX(0); }
+.btn-hero:hover { box-shadow: 0 10px 40px var(--gold-glow); }
+
+.btn-hero-ghost {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 18px 32px;
+  border: 1px solid var(--line);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--text);
+  transition: all 0.2s;
+}
+.btn-hero-ghost:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.hero-meta {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+  margin-top: 100px; padding-top: 36px;
+  border-top: 1px solid var(--line-soft);
+  animation: fadeUp 0.8s 0.5s both;
+}
+.hero-meta-item .num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 38px;
+  font-weight: 400;
+  color: var(--gold);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.hero-meta-item .label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+/* ============================================
+   SECTIONS
+   ============================================ */
+.section {
+  padding: 120px 0;
+  position: relative;
+}
+
+.section-head {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  margin-bottom: 64px;
+  gap: 24px; flex-wrap: wrap;
+}
+.section-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 20px;
+  display: flex; align-items: center; gap: 14px;
+}
+.section-eyebrow .num { color: var(--text-faint); }
+.section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 400;
+  font-size: clamp(28px, 3.8vw, 52px);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  max-width: 780px;
+}
+.section-title em { color: var(--gold); font-style: italic; }
+.section-sub {
+  max-width: 360px;
+  color: var(--text-dim);
+  font-size: 15px; line-height: 1.7;
+  flex-shrink: 0;
+}
+
+/* ============================================
+   CATEGORY FILTERS
+   ============================================ */
+.filters {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  margin-bottom: 48px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid var(--line-soft);
+}
+.filter-btn {
+  padding: 12px 22px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--text-dim);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  transition: all 0.2s;
+  border-radius: 999px;
+}
+.filter-btn:hover {
+  border-color: var(--text-dim);
+  color: var(--text);
+}
+.filter-btn.active {
+  background: var(--gold);
+  color: #000;
+  border-color: var(--gold);
+}
+
+/* ============================================
+   PRODUCTS GRID
+   ============================================ */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+@media (min-width: 480px) {
+  .products-grid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+  }
+}
+@media (min-width: 768px) {
+  .products-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 32px;
+  }
+}
+
+.product {
+  background: var(--bg-card);
+  border: 1px solid var(--line-soft);
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  display: flex; flex-direction: column;
+  position: relative;
+}
+.product:hover {
+  border-color: var(--gold);
+  transform: translateY(-6px);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+}
+
+.product-img {
+  aspect-ratio: 1/1;
+  background: #ffffff;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+}
+.product-img img {
+  width: 100%; height: 100%; object-fit: contain;
+  transition: transform 0.6s;
+  mix-blend-mode: multiply;
+  background: #ffffff;
+  padding: 8px;
+}
+.product:hover .product-img img { transform: scale(1.05); }
+.product-img-placeholder {
+  width: 50%; max-width: 120px;
+  color: var(--gold);
+  opacity: 0.4;
+}
+
+.product-badge {
+  position: absolute;
+  top: 14px; left: 14px;
+  background: var(--gold);
+  color: #000;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; font-weight: 700;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  padding: 6px 10px;
+  z-index: 2;
+}
+
+.product-info {
+  padding: 24px;
+  flex: 1;
+  display: flex; flex-direction: column;
+}
+.product-cat {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--text-faint);
+  margin-bottom: 10px;
+}
+.product-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 1.25;
+  margin-bottom: 16px;
+  flex: 1;
+  letter-spacing: -0.01em;
+}
+.product-price-row {
+  display: flex; align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 18px;
+  gap: 12px;
+}
+.product-price {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px;
+  font-weight: 500;
+  color: var(--gold);
+  line-height: 1;
+}
+.product-price small {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--text-dim);
+  letter-spacing: 0.1em;
+  display: block;
+  margin-top: 6px;
+  text-transform: uppercase;
+}
+
+.product-cta {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 14px 16px;
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--text);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; font-weight: 600;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  transition: all 0.2s;
+}
+.product-cta:hover {
+  background: var(--gold);
+  color: #000;
+  border-color: var(--gold);
+}
+.product-cta.added {
+  background: var(--gold);
+  color: #000;
+  border-color: var(--gold);
+}
+
+.product-esgotado {
+  opacity: 0.6;
+}
+.product-esgotado .product-img img {
+  filter: grayscale(60%);
+}
+
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 80px 24px;
+  color: var(--text-dim);
+}
+.empty-state p {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 22px;
+}
+
+.loading {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 80px 24px;
+  color: var(--text-dim);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+}
+
+/* ============================================
+   SOBRE
+   ============================================ */
+#sobre {
+  background: linear-gradient(180deg, var(--bg) 0%, #050505 100%);
+  border-top: 1px solid var(--line-soft);
+  border-bottom: 1px solid var(--line-soft);
+}
+.about-grid {
+  display: grid; grid-template-columns: 1fr;
+  gap: 64px; align-items: center;
+}
+@media (min-width: 900px) {
+  .about-grid { grid-template-columns: 1fr 1fr; gap: 80px; }
+}
+.about-text h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 400;
+  font-size: clamp(26px, 3.5vw, 44px);
+  line-height: 1;
+  margin-bottom: 36px;
+  letter-spacing: -0.01em;
+}
+.about-text h2 em { color: var(--gold); font-style: italic; }
+.about-text p {
+  color: var(--text-dim);
+  font-size: 16px;
+  line-height: 1.8;
+  margin-bottom: 20px;
+}
+.about-text p strong { color: var(--text); font-weight: 500; }
+
+.about-visual {
+  position: relative;
+  aspect-ratio: 4/5;
+  background:
+    radial-gradient(ellipse at 30% 30%, var(--gold-glow) 0%, transparent 50%),
+    linear-gradient(135deg, #111 0%, #0a0a0a 100%);
+  border: 1px solid var(--line-soft);
+  overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+.about-mark-geo {
+  width: 200px; height: 200px;
+  border: 1px solid var(--gold);
+  border-radius: 50%;
+  position: relative;
+  opacity: 0.4;
+  animation: pulse-ring 5s ease-in-out infinite;
+}
+.about-mark-geo::before {
+  content: '';
+  position: absolute; inset: 20px;
+  border: 1px solid var(--gold);
+  border-radius: 50%;
+  opacity: 0.5;
+}
+@keyframes pulse-ring {
+  0%, 100% { box-shadow: 0 0 0 0 var(--gold-glow); }
+  50% { box-shadow: 0 0 40px 10px transparent; }
+}
+
+.about-features {
+  display: grid; grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  margin-top: 40px; padding-top: 40px;
+  border-top: 1px solid var(--line-soft);
+}
+.feature .num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 42px;
+  font-weight: 500;
+  color: var(--gold);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.feature .label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+/* ============================================
+   ALPHA HEMP BRASIL
+   ============================================ */
+.hemp-section {
+  padding: 100px 0;
+  background: #f8f9f7;
+  border-top: 1px solid #e0e5df;
+  border-bottom: 1px solid #e0e5df;
+  position: relative;
+  overflow: hidden;
+}
+.hemp-section::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 1px; height: 60px;
+  background: linear-gradient(to bottom, transparent, #2d5a2d);
+}
+.hemp-grid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 720px;
+  margin: 0 auto;
+  gap: 0;
+}
+@media (max-width: 900px) {
+  .hemp-grid { gap: 0; }
+}
+.hemp-badge { display: none; }
+.hemp-visual { display: none; }
+.hemp-content { width: 100%; }
+.hemp-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.35em; text-transform: uppercase;
+  color: #2d5a2d;
+  margin-bottom: 28px;
+  display: flex; align-items: center; justify-content: center; gap: 16px;
+}
+.hemp-eyebrow::before,
+.hemp-eyebrow::after {
+  content: ''; width: 32px; height: 1px;
+  background: #2d5a2d;
+  opacity: 0.5;
+}
+.hemp-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(32px, 4vw, 52px);
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: #1a2e1a;
+  margin-bottom: 6px;
+  line-height: 1;
+}
+.hemp-name em {
+  font-style: italic;
+  color: #3a7a3a;
+}
+.hemp-subtitle {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: #7a9a7a;
+  margin-bottom: 40px;
+}
+.hemp-divider {
+  width: 40px; height: 1px;
+  background: #3a7a3a;
+  margin: 0 auto 40px;
+  opacity: 0.4;
+}
+.hemp-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(20px, 2.5vw, 28px);
+  font-weight: 400;
+  font-style: italic;
+  line-height: 1.4;
+  color: #2a3a2a;
+  margin-bottom: 20px;
+  letter-spacing: 0.01em;
+}
+.hemp-title em { color: #3a7a3a; font-style: normal; font-weight: 500; }
+.hemp-text {
+  color: #5a6e5a;
+  font-size: 15px;
+  line-height: 1.85;
+  max-width: 580px;
+  margin: 0 auto 32px;
+}
+.hemp-tags {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  margin-bottom: 36px;
+  justify-content: center;
+}
+.hemp-tags span {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: #3a7a3a;
+  padding: 7px 14px;
+  border: 1px solid #c0d5c0;
+  background: #f0f5f0;
+}
+.hemp-cta {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 16px 36px;
+  background: #2d5a2d;
+  border: 1px solid #2d5a2d;
+  color: #f0f5f0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; font-weight: 600;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  transition: all 0.3s;
+  text-decoration: none;
+}
+.hemp-cta:hover {
+  background: #1a3a1a;
+  border-color: #1a3a1a;
+  color: #fff;
+  box-shadow: 0 8px 30px rgba(45,90,45,0.2);
+}
+.hemp-cta svg { opacity: 0.7; }
+
+/* ============================================
+   FOOTER
+   ============================================ */
+footer {
+  background: #050505;
+  border-top: 1px solid var(--line-soft);
+  padding: 80px 0 32px;
+}
+.footer-grid {
+  display: grid; grid-template-columns: 1fr;
+  gap: 48px;
+  margin-bottom: 48px;
+}
+@media (min-width: 700px) {
+  .footer-grid { grid-template-columns: 2fr 1fr 1fr; }
+}
+.footer-brand .logo { margin-bottom: 24px; }
+.footer-brand p {
+  color: var(--text-dim);
+  font-size: 14px;
+  line-height: 1.8;
+  max-width: 360px;
+}
+.footer-col h4 {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 24px;
+}
+.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+.footer-col a {
+  color: var(--text-dim);
+  font-size: 14px;
+  transition: color 0.2s;
+}
+.footer-col a:hover { color: var(--gold); }
+.footer-bottom {
+  padding-top: 32px;
+  border-top: 1px solid var(--line-soft);
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--text-faint);
+}
+.footer-bottom .warning { color: var(--gold); }
+
+/* ============================================
+   CART DRAWER
+   ============================================ */
+.cart-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  z-index: 998;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.3s;
+}
+.cart-overlay.open {
+  opacity: 1; pointer-events: auto;
+}
+
+.cart-drawer {
+  position: fixed; top: 0; right: 0;
+  width: 100%; max-width: 460px;
+  height: 100vh;
+  background: var(--bg-soft);
+  border-left: 1px solid var(--line);
+  z-index: 999;
+  transform: translateX(100%);
+  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  display: flex; flex-direction: column;
+}
+.cart-drawer.open { transform: translateX(0); }
+
+.cart-header {
+  padding: 28px 28px 20px;
+  border-bottom: 1px solid var(--line-soft);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.cart-header h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px;
+  font-weight: 500;
+}
+.cart-header h3 em { color: var(--gold); font-style: italic; }
+.cart-close {
+  width: 36px; height: 36px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+.cart-close:hover {
+  border-color: var(--gold); color: var(--gold);
+}
+
+.cart-items {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 28px;
+  min-height: 0; /* crítico: impede que empurre o footer */
+}
+.cart-empty {
+  text-align: center;
+  padding: 80px 24px;
+  color: var(--text-dim);
+}
+.cart-empty p {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+.cart-empty .mono {
+  font-size: 10px; color: var(--text-faint);
+}
+
+.cart-item {
+  display: flex; gap: 16px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--line-soft);
+}
+.cart-item-img {
+  width: 70px; height: 70px;
+  background: var(--bg-card);
+  border: 1px solid var(--line-soft);
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.cart-item-img img { width: 100%; height: 100%; object-fit: cover; }
+.cart-item-img svg { width: 50%; opacity: 0.4; color: var(--gold); }
+.cart-item-info {
+  flex: 1; display: flex; flex-direction: column; justify-content: space-between;
+}
+.cart-item-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 1.3;
+  margin-bottom: 4px;
+}
+.cart-item-cat {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--text-faint);
+  margin-bottom: 8px;
+}
+.cart-item-bottom {
+  display: flex; justify-content: space-between; align-items: center;
+}
+.cart-qty {
+  display: flex; align-items: center;
+  border: 1px solid var(--line);
+}
+.cart-qty button {
+  width: 28px; height: 28px;
+  color: var(--text-dim);
+  transition: color 0.2s;
+}
+.cart-qty button:hover { color: var(--gold); }
+.cart-qty span {
+  width: 32px; text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--text);
+}
+.cart-item-price {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--gold);
+}
+.cart-item-remove {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--text-faint);
+  margin-top: 6px;
+  display: inline-block;
+  transition: color 0.2s;
+}
+.cart-item-remove:hover { color: #ff6b6b; }
+
+.cart-footer {
+  padding: 24px 28px;
+  border-top: 1px solid var(--line-soft);
+  background: var(--bg);
+  flex-shrink: 0; /* nunca encolhe — sempre visível */
+  padding-bottom: max(24px, env(safe-area-inset-bottom));
+}
+.cart-total-row {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 0.1em; text-transform: uppercase;
+}
+.cart-total-final {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin: 16px 0 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line-soft);
+}
+.cart-total-final .label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--text);
+}
+.cart-total-final .value {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 36px;
+  font-weight: 500;
+  color: var(--gold);
+  line-height: 1;
+}
+.cart-checkout-btn {
+  width: 100%;
+  padding: 18px;
+  background: var(--gold);
+  color: #000;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; font-weight: 700;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  transition: all 0.2s;
+  border: none; cursor: pointer;
+}
+.cart-checkout-btn:hover {
+  background: var(--text);
+  box-shadow: 0 8px 30px var(--gold-glow);
+}
+.cart-checkout-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ============================================
+   CHECKOUT MODAL
+   ============================================ */
+/* ============================================
+   MODAL DE PRODUTO (link compartilhável)
+   ============================================ */
+.product-modal {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.92);
+  backdrop-filter: blur(8px);
+  z-index: 999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.product-modal.open { display: flex; }
+.product-modal-box {
+  max-width: 460px; width: 100%;
+  background: var(--bg-soft);
+  border: 1px solid var(--line);
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+.product-modal-close {
+  position: absolute; top: 12px; right: 12px;
+  width: 38px; height: 38px;
+  border: 1px solid rgba(201,169,97,0.4);
+  background: rgba(0,0,0,0.7);
+  color: var(--gold);
+  font-size: 22px; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  z-index: 10;
+  border-radius: 0;
+  padding: 0;
+  font-family: inherit;
+}
+.product-modal-close:hover {
+  border-color: var(--gold);
+  background: rgba(0,0,0,0.9);
+}
+.product-modal-img {
+  width: 100%;
+  height: 280px;
+  max-height: 38vh;
+  background: #fff;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.product-modal-img img {
+  width: 100%; height: 100%;
+  object-fit: contain;
+}
+.product-modal-body {
+  padding: 22px 24px 24px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+}
+.product-modal-cat {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+}
+.product-modal-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px;
+  font-weight: 500;
+  line-height: 1.15;
+  margin-bottom: 12px;
+  color: var(--text);
+}
+.product-modal-price {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 32px;
+  font-weight: 500;
+  color: var(--gold);
+  margin-bottom: 4px;
+}
+.product-modal-price small {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: var(--text-dim);
+  margin-left: 8px;
+  vertical-align: middle;
+}
+.product-modal-desc {
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.6;
+  margin: 16px 0 20px;
+  white-space: pre-wrap;
+}
+.product-modal-actions {
+  display: flex; gap: 10px;
+  flex-direction: column;
+  margin-top: 18px;
+}
+.product-modal-actions .btn { width: 100%; padding: 15px; min-height: 50px; }
+.product-modal-share {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 11px;
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--text-dim);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.product-modal-share:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+/* Botão de compartilhar discreto no card de produto */
+.product-share-btn {
+  position: absolute;
+  top: 8px; left: 8px;
+  width: 32px; height: 32px;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(201,169,97,0.3);
+  color: var(--gold);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s, border-color 0.2s;
+  z-index: 2;
+}
+.product:hover .product-share-btn,
+.product-share-btn:focus { opacity: 1; }
+.product-share-btn:hover { border-color: var(--gold); background: rgba(0,0,0,0.85); }
+@media (hover: none) {
+  .product-share-btn { opacity: 0.85; }
+}
+.product { position: relative; }
+
+/* Mobile: modal full-screen, foto menor proporcional */
+@media (max-width: 640px) {
+  .product-modal { padding: 0; align-items: flex-start; }
+  .product-modal-box {
+    max-width: 100%;
+    max-height: 100svh;
+    min-height: 100svh;
+    border: none;
+  }
+  .product-modal-img { height: 240px; max-height: 35vh; }
+  .product-modal-name { font-size: 24px; }
+  .product-modal-price { font-size: 28px; }
+  .product-modal-body { padding: 18px 18px 28px; padding-bottom: max(28px, env(safe-area-inset-bottom)); }
+}
+
+.checkout-modal {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.92);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: none;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 0;
+  overflow: hidden;
+}
+.checkout-modal.open { display: flex; }
+
+.checkout-box {
+  max-width: 480px; width: 100%;
+  background: var(--bg-soft);
+  border: 1px solid var(--line);
+  min-height: 100svh;
+  max-height: 100svh;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+/* Header sticky */
+.checkout-head {
+  flex-shrink: 0;
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--line-soft);
+  background: var(--bg-soft);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+.checkout-head-text { flex: 1; min-width: 0; }
+.checkout-close {
+  width: 36px; height: 36px;
+  flex-shrink: 0;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--text-dim);
+  font-size: 20px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.checkout-close:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+/* Body scrollável */
+.checkout-body {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 20px 24px;
+  -webkit-overflow-scrolling: touch;
+}
+/* Footer sticky com total + botão */
+.checkout-foot {
+  flex-shrink: 0;
+  padding: 14px 20px 18px;
+  border-top: 1px solid var(--line-soft);
+  background: var(--bg-soft);
+  padding-bottom: max(18px, env(safe-area-inset-bottom));
+}
+.checkout-foot-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 12px;
+}
+.checkout-foot-total .label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+.checkout-foot-total .value {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px;
+  font-weight: 500;
+  color: var(--gold);
+}
+.checkout-foot-actions {
+  display: flex;
+  gap: 10px;
+}
+.checkout-foot-actions .btn {
+  flex: 1;
+  padding: 16px 18px;
+  min-height: 52px;
+}
+.checkout-foot-actions .btn-ghost {
+  flex: 0 0 auto;
+  padding: 16px 22px;
+}
+.checkout-head h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 24px;
+  font-weight: 500;
+  margin-bottom: 4px;
+  line-height: 1.1;
+}
+.checkout-head h3 em { color: var(--gold); font-style: italic; }
+.checkout-head .sub {
+  color: var(--text-dim);
+  font-size: 12px;
+}
+
+.form-field {
+  margin-bottom: 14px;
+}
+.form-field label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--gold);
+  display: block;
+  margin-bottom: 6px;
+}
+.form-field input,
+.form-field textarea {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  color: var(--text);
+  padding: 10px 14px;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+.form-field input:focus,
+.form-field textarea:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+.form-field textarea {
+  min-height: 60px;
+  resize: vertical;
+}
+
+.checkout-summary {
+  background: var(--bg);
+  padding: 20px;
+  margin: 24px 0;
+  border: 1px solid var(--line-soft);
+}
+.checkout-summary h4 {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 12px;
+}
+.summary-line {
+  display: flex; justify-content: space-between;
+  font-size: 13px;
+  padding: 6px 0;
+  color: var(--text-dim);
+}
+.summary-line strong {
+  color: var(--text); font-weight: 500;
+}
+.summary-total {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding-top: 12px;
+  margin-top: 12px;
+  border-top: 1px solid var(--line-soft);
+}
+.summary-total .label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.15em; text-transform: uppercase;
+}
+.summary-total .value {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px;
+  font-weight: 500;
+  color: var(--gold);
+}
+
+.checkout-actions {
+  display: none;
+}
+
+/* ============================================
+   SUCCESS MODAL
+   ============================================ */
+.success-modal {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.95);
+  backdrop-filter: blur(8px);
+  z-index: 1001;
+  display: none;
+  align-items: center; justify-content: center;
+  padding: 24px;
+}
+.success-modal.open { display: flex; }
+.success-box {
+  max-width: 480px; width: 100%;
+  background: var(--bg-soft);
+  border: 1px solid var(--gold);
+  padding: 56px 32px;
+  text-align: center;
+}
+.success-icon {
+  width: 64px; height: 64px;
+  border: 1px solid var(--gold);
+  border-radius: 50%;
+  margin: 0 auto 24px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--gold);
+}
+.success-box h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 36px;
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+.success-box h3 em { color: var(--gold); font-style: italic; }
+.success-box p {
+  color: var(--text-dim);
+  font-size: 14px;
+  line-height: 1.7;
+  margin-bottom: 24px;
+}
+.order-number {
+  background: var(--bg);
+  padding: 16px;
+  margin: 20px 0 28px;
+  border: 1px solid var(--line);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  color: var(--gold);
+  letter-spacing: 0.2em;
+}
+
+/* ============================================
+   FLOATING WHATSAPP
+   ============================================ */
+/* Payment options */
+.payment-options {
+  display: flex; flex-direction: column; gap: 10px;
+}
+.payment-opt { cursor: pointer; }
+.payment-opt input { display: none; }
+.payment-opt-box {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 16px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  transition: all 0.2s;
+  min-width: 0;
+}
+.payment-opt-box > span { min-width: 0; }
+.payment-opt-box strong { font-size: 14px; font-weight: 600; flex: 1; min-width: 0; }
+.payment-opt-box small { color: var(--text-dim); font-size: 12px; }
+.payment-opt input:checked + .payment-opt-box {
+  border-color: var(--gold);
+  background: rgba(201,169,97,0.08);
+}
+.payment-opt-box svg { color: var(--gold); flex-shrink: 0; }
+
+.float-wa {
+  position: fixed;
+  bottom: 24px; right: 24px;
+  width: 58px; height: 58px;
+  background: var(--gold);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 8px 30px var(--gold-glow);
+  z-index: 90;
+  transition: transform 0.2s;
+}
+.float-wa:hover { transform: scale(1.1); }
+.float-wa svg { width: 28px; height: 28px; color: #000; }
+@keyframes slideUp{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
+```
 
   </style>
 </head>
 <body>
 
   <!-- ANNOUNCEMENT -->
+
   <div class="announcement">
     <div class="announcement-track">
       <span>Alphaville · Barueri · SP</span>
@@ -1667,6 +1671,7 @@
   </div>
 
   <!-- NAV -->
+
   <nav class="nav">
     <div class="nav-inner">
       <a href="#" class="logo">
@@ -1689,6 +1694,7 @@
   </nav>
 
   <!-- HERO -->
+
   <section class="hero">
     <div class="hero-grid">
       <div class="hero-eyebrow">ALPHA GALERIE · ALPHAVILLE · DESDE 2014</div>
@@ -1726,6 +1732,7 @@
   </section>
 
   <!-- PRODUTOS -->
+
   <section class="section" id="produtos">
     <div class="container">
       <div class="section-head">
@@ -1736,89 +1743,97 @@
         <p class="section-sub">Da seda artesanal ao charuto raro. Cada peça selecionada com cuidado para quem busca qualidade.</p>
       </div>
 
-      <div class="filters" id="filters">
-        <button class="filter-btn active" data-cat="todos">Todos</button>
-        <!-- Categorias carregadas dinamicamente -->
-      </div>
-      <div class="filters" id="subfilters" style="display:none; margin-top:-20px; padding-top:12px; border-top:none; margin-bottom:24px;"></div>
+```
+  <div class="filters" id="filters">
+    <button class="filter-btn active" data-cat="todos">Todos</button>
+    <!-- Categorias carregadas dinamicamente -->
+  </div>
+  <div class="filters" id="subfilters" style="display:none; margin-top:-20px; padding-top:12px; border-top:none; margin-bottom:24px;"></div>
 
-      <!-- CAMPO DE BUSCA -->
-      <div style="margin-bottom:28px;">
-        <div style="position:relative;max-width:480px;">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-faint);pointer-events:none;">
-            <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
-          </svg>
-          <input
-            type="text"
-            id="searchInput"
-            placeholder="Buscar produto..."
-            oninput="filterSearch(this.value)"
-            style="
-              width:100%;
-              background:var(--bg-soft);
-              border:1px solid var(--line);
-              color:var(--text);
-              padding:12px 16px 12px 42px;
-              font-family:'Inter',sans-serif;
-              font-size:14px;
-              transition:border-color 0.2s;
-              outline:none;
-            "
-            onfocus="this.style.borderColor='var(--gold)'"
-            onblur="this.style.borderColor='var(--line)'"
-          />
-        </div>
-      </div>
-
-      <div class="products-grid" id="productsGrid">
-        <div class="loading">CARREGANDO PRODUTOS...</div>
-      </div>
+  <!-- CAMPO DE BUSCA -->
+  <div style="margin-bottom:28px;">
+    <div style="position:relative;max-width:480px;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-faint);pointer-events:none;">
+        <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+      </svg>
+      <input
+        type="text"
+        id="searchInput"
+        placeholder="Buscar produto..."
+        oninput="filterSearch(this.value)"
+        style="
+          width:100%;
+          background:var(--bg-soft);
+          border:1px solid var(--line);
+          color:var(--text);
+          padding:12px 16px 12px 42px;
+          font-family:'Inter',sans-serif;
+          font-size:14px;
+          transition:border-color 0.2s;
+          outline:none;
+        "
+        onfocus="this.style.borderColor='var(--gold)'"
+        onblur="this.style.borderColor='var(--line)'"
+      />
     </div>
+  </div>
+
+  <div class="products-grid" id="productsGrid">
+    <div class="loading">CARREGANDO PRODUTOS...</div>
+  </div>
+</div>
+```
+
   </section>
 
   <!-- ALPHA HEMP BRASIL -->
+
   <section class="hemp-section" id="hemp">
     <div class="container">
       <div class="hemp-grid">
         <div class="hemp-content">
           <div class="hemp-eyebrow">Universo Alpha · Cannabis Medicinal</div>
 
-          <div class="hemp-name">Alpha <em>Hemp</em> Brasil</div>
-          <div class="hemp-subtitle">Especialistas em Cannabis Medicinal Regulamentada</div>
+```
+      <div class="hemp-name">Alpha <em>Hemp</em> Brasil</div>
+      <div class="hemp-subtitle">Especialistas em Cannabis Medicinal Regulamentada</div>
 
-          <div class="hemp-divider"></div>
+      <div class="hemp-divider"></div>
 
-          <h3 class="hemp-title">
-            Cannabis medicinal com responsabilidade.<br>
-            Informação, suporte e <em>cuidado especializado</em>.
-          </h3>
+      <h3 class="hemp-title">
+        Cannabis medicinal com responsabilidade.<br>
+        Informação, suporte e <em>cuidado especializado</em>.
+      </h3>
 
-          <p class="hemp-text">
-            A Alpha Hemp Brasil é dedicada exclusivamente ao universo da cannabis medicinal regulamentada no Brasil.
-            Atendemos pacientes com prescrição médica e cadastro na Anvisa, oferecendo informação qualificada,
-            suporte ao tratamento e produtos dentro da legislação brasileira vigente.
-          </p>
+      <p class="hemp-text">
+        A Alpha Hemp Brasil é dedicada exclusivamente ao universo da cannabis medicinal regulamentada no Brasil.
+        Atendemos pacientes com prescrição médica e cadastro na Anvisa, oferecendo informação qualificada,
+        suporte ao tratamento e produtos dentro da legislação brasileira vigente.
+      </p>
 
-          <div class="hemp-tags">
-            <span>Anvisa regulamentado</span>
-            <span>Prescrição médica</span>
-            <span>Pacientes + médicos</span>
-            <span>Cannabis terapêutica</span>
-          </div>
-
-          <a href="https://alphahempbrasil.com" target="_blank" rel="noopener" class="hemp-cta">
-            Acessar Alpha Hemp Brasil
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M7 17L17 7M17 7H7M17 7v10"/>
-            </svg>
-          </a>
-        </div>
+      <div class="hemp-tags">
+        <span>Anvisa regulamentado</span>
+        <span>Prescrição médica</span>
+        <span>Pacientes + médicos</span>
+        <span>Cannabis terapêutica</span>
       </div>
+
+      <a href="https://alphahempbrasil.com" target="_blank" rel="noopener" class="hemp-cta">
+        Acessar Alpha Hemp Brasil
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M7 17L17 7M17 7H7M17 7v10"/>
+        </svg>
+      </a>
     </div>
+  </div>
+</div>
+```
+
   </section>
 
   <!-- FOOTER -->
+
   <footer>
     <div class="container">
       <div class="footer-grid">
@@ -1853,6 +1868,7 @@
   </footer>
 
   <!-- CART DRAWER -->
+
   <div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
   <aside class="cart-drawer" id="cartDrawer">
     <div class="cart-header">
@@ -1885,7 +1901,9 @@
   </aside>
 
   <!-- CHECKOUT MODAL -->
+
   <!-- MODAL DE PRODUTO (link compartilhável: ?p=ID) -->
+
   <div class="product-modal" id="productModal" onclick="if(event.target===this)closeProductModal()">
     <div class="product-modal-box">
       <button class="product-modal-close" onclick="closeProductModal()" aria-label="Fechar">×</button>
@@ -1910,229 +1928,233 @@
         <button type="button" class="checkout-close" onclick="closeCheckout()" aria-label="Fechar">×</button>
       </div>
 
-      <div class="checkout-body">
-      <!-- Login Google removido - usar campos abaixo -->
+```
+  <div class="checkout-body">
+  <!-- Login Google removido - usar campos abaixo -->
 
-      <form id="checkoutForm" onsubmit="submitOrder(event)">
-        <div class="form-field">
-          <label>Nome completo *</label>
-          <input type="text" id="fNome" required placeholder="Seu nome" />
-        </div>
-        <div class="form-field">
-          <label>WhatsApp *</label>
-          <input type="tel" id="fWhats" required placeholder="(11) 99999-9999" />
-        </div>
-        <div class="form-field">
-          <label>Email</label>
-          <input type="email" id="fEmail" placeholder="seu@email.com" />
-        </div>
-        <!-- TIPO DE ENTREGA -->
-        <div class="form-field">
-          <label>Como quer receber? *</label>
-          <div class="payment-options">
-            <label class="payment-opt">
-              <input type="radio" name="tipoEntrega" value="entrega" required onclick="mostrarEntrega()" />
-              <span class="payment-opt-box">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M1 3h15v13H1zM16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
-                </svg>
-                <span style="flex:1;">
-                  <strong>Entrega</strong>
-                  <small style="display:block;margin-top:2px;color:var(--text-dim);">Motoboy — frete calculado pelo CEP</small>
-                </span>
-              </span>
-            </label>
-            <label class="payment-opt">
-              <input type="radio" name="tipoEntrega" value="retirada" onclick="mostrarRetirada()" />
-              <span class="payment-opt-box">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0116 0z"/><circle cx="12" cy="10" r="3"/>
-                </svg>
-                <span style="flex:1;">
-                  <strong>Retirada no local</strong>
-                  <small style="display:block;margin-top:2px;color:var(--text-dim);">Alpha Galerie · Alphaville · Frete grátis</small>
-                </span>
-                <span style="background:#2a5a2a;color:#6aba6a;padding:4px 10px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.1em;white-space:nowrap;">GRÁTIS</span>
-              </span>
-            </label>
-          </div>
-        </div>
-
-        <!-- CAMPOS DE ENDEREÇO (só aparecem se escolher entrega) -->
-        <div id="camposEntrega" style="display:none;">
-          <div class="form-field">
-            <label>CEP *</label>
-            <input type="text" id="fCep" placeholder="00000-000" maxlength="9"
-              oninput="mascaraCep(this)" />
-            <div id="cepStatus" style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;margin-top:6px;min-height:14px;"></div>
-          </div>
-          <!-- Frete calculado -->
-          <div id="freteBox" style="display:none;background:var(--bg);border:1px solid var(--line);padding:14px 16px;margin-bottom:14px;">
-            <div style="display:flex;justify-content:space-between;align-items:center;">
-              <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-dim);" id="freteLabel">Frete</span>
-              <span style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--gold);" id="freteValor">R$ 0,00</span>
-            </div>
-            <div id="freteInfo" style="font-size:11px;color:var(--text-faint);margin-top:4px;"></div>
-          </div>
-          <div class="form-field">
-            <label>Rua / Avenida</label>
-            <input type="text" id="fRua" placeholder="Nome da rua ou avenida" />
-          </div>
-          <div style="display:grid; grid-template-columns: 1fr 2fr; gap: 12px;">
-            <div class="form-field">
-              <label>Número</label>
-              <input type="text" id="fNumero" placeholder="123" />
-            </div>
-            <div class="form-field">
-              <label>Complemento</label>
-              <input type="text" id="fComplemento" placeholder="Apto, Bloco, Casa..." />
-            </div>
-          </div>
-          <div class="form-field">
-            <label>Bairro</label>
-            <input type="text" id="fBairro" placeholder="Bairro" />
-          </div>
-          <div class="form-field">
-            <label>Cidade</label>
-            <input type="text" id="fCidade" placeholder="Cidade" />
-          </div>
-        </div>
-
-        <div class="form-field">
-          <label>Observações</label>
-          <textarea id="fObs" placeholder="Alguma observação sobre o pedido"></textarea>
-        </div>
-
-        <!-- CUPOM DE DESCONTO -->
-        <div class="form-field">
-          <label>Cupom de desconto</label>
-          <div style="display:flex;gap:8px;">
-            <input type="text" id="fCupom" placeholder="Digite o código" style="flex:1;text-transform:uppercase;" oninput="this.value=this.value.toUpperCase()" />
-            <button type="button" onclick="aplicarCupom()" style="padding:10px 16px;background:var(--bg);border:1px solid var(--gold);color:var(--gold);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.15em;cursor:pointer;white-space:nowrap;">APLICAR</button>
-          </div>
-          <div id="cupomStatus" style="font-family:'JetBrains Mono',monospace;font-size:10px;margin-top:6px;min-height:14px;"></div>
-        </div>
-
-        <div class="form-field">
-          <label>Forma de pagamento *</label>
-          <div class="payment-options">
-            <label class="payment-opt">
-              <input type="radio" name="pagamento" value="pix" required onchange="atualizarTotalCheckout()" />
-              <span class="payment-opt-box">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-                </svg>
-                <span style="flex:1;"><strong>Pix</strong></span>
-                <span style="background:var(--gold);color:#000;padding:4px 10px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.1em;white-space:nowrap;">5% OFF</span>
-              </span>
-            </label>
-            <label class="payment-opt">
-              <input type="radio" name="pagamento" value="cartao" onchange="atualizarTotalCheckout()" />
-              <span class="payment-opt-box">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/>
-                </svg>
-                <span style="flex:1;">
-                  <strong>Cartão</strong>
-                  <small style="display:block;margin-top:2px;color:var(--text-dim);">Crédito ou débito — até 12×</small>
-                </span>
-              </span>
-            </label>
-            <label class="payment-opt" id="optPagarRetirada" style="display:none;">
-              <input type="radio" name="pagamento" value="pagar_retirada" onchange="atualizarTotalCheckout()" />
-              <span class="payment-opt-box">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M12 2C8 2 5 5 5 9c0 3 1.5 5.5 4 7l1 4h4l1-4c2.5-1.5 4-4 4-7 0-4-3-7-7-7z"/>
-                </svg>
-                <span style="flex:1;">
-                  <strong>Pagar na retirada</strong>
-                  <small style="display:block;margin-top:2px;color:var(--text-dim);">Pix ou maquininha no local</small>
-                </span>
-              </span>
-            </label>
-          </div>
-        </div>
-
-        <!-- FORMULÁRIO CARTÃO (aparece quando seleciona cartão) -->
-        <div id="cartaoForm" style="display:none;margin-top:16px;padding:16px;background:var(--bg);border:1px solid var(--line-soft);">
-          <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.15em;color:var(--gold);margin-bottom:14px;">DADOS DO CARTÃO</div>
-          <div class="form-field" style="margin-bottom:12px;">
-            <label style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.15em;color:var(--text-dim);display:block;margin-bottom:5px;">NÚMERO DO CARTÃO</label>
-            <div id="mp_card_number" style="background:#fff;border:1px solid var(--line-soft);padding:12px;height:44px;"></div>
-          </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
-            <div class="form-field">
-              <label style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.15em;color:var(--text-dim);display:block;margin-bottom:5px;">VALIDADE</label>
-              <div id="mp_expiration_date" style="background:#fff;border:1px solid var(--line-soft);padding:12px;height:44px;"></div>
-            </div>
-            <div class="form-field">
-              <label style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.15em;color:var(--text-dim);display:block;margin-bottom:5px;">CVV</label>
-              <div id="mp_security_code" style="background:#fff;border:1px solid var(--line-soft);padding:12px;height:44px;"></div>
-            </div>
-          </div>
-          <div class="form-field" style="margin-bottom:12px;">
-            <label style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.15em;color:var(--text-dim);display:block;margin-bottom:5px;">NOME NO CARTÃO</label>
-            <div id="mp_cardholder_name" style="background:#fff;border:1px solid var(--line-soft);padding:12px;height:44px;"></div>
-          </div>
-          <div class="form-field" style="margin-bottom:12px;">
-            <label style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.15em;color:var(--text-dim);display:block;margin-bottom:5px;">PARCELAS</label>
-            <select id="mp_installments" style="width:100%;background:#fff;border:1px solid var(--line-soft);color:#000;padding:10px;font-family:'JetBrains Mono',monospace;font-size:12px;">
-              <option value="1">1× sem juros</option>
-              <option value="2">2× sem juros</option>
-              <option value="3">3× sem juros</option>
-              <option value="4">4× sem juros</option>
-              <option value="5">5× sem juros</option>
-              <option value="6">6× sem juros</option>
-              <option value="7">7× com juros</option>
-              <option value="8">8× com juros</option>
-              <option value="9">9× com juros</option>
-              <option value="10">10× com juros</option>
-              <option value="11">11× com juros</option>
-              <option value="12">12× com juros</option>
-            </select>
-          </div>
-          <div style="font-size:11px;color:var(--text-faint);text-align:center;">🔒 Pagamento seguro via Mercado Pago</div>
-        </div>
-
-        <div class="checkout-summary">
-          <h4>Resumo do pedido</h4>
-          <div id="checkoutItems"></div>
-          <div id="pixDiscountRow" style="display:none;padding:8px 0;border-top:1px solid var(--line-soft);">
-            <div class="summary-line">
-              <span style="color:var(--gold);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;">DESCONTO PIX (5%)</span>
-              <strong style="color:var(--gold);" id="pixDiscountAmt">— R$ 0,00</strong>
-            </div>
-          </div>
-          <div id="freteResumoRow" class="summary-line" style="display:none;border-top:1px solid var(--line-soft);padding-top:8px;">
-            <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;color:var(--text-dim);">FRETE</span>
-            <strong id="freteResumoValor">R$ 0,00</strong>
-          </div>
-          <div id="cupomResumoRow" class="summary-line" style="display:none;">
-            <span style="color:#4ade80;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;">CUPOM</span>
-            <strong style="color:#4ade80;" id="cupomResumoValor">— R$ 0,00</strong>
-          </div>
-          <div class="summary-total">
-            <span class="label">Total</span>
-            <span class="value" id="checkoutTotal">R$ 0,00</span>
-          </div>
-        </div>
-      </form>
-      </div><!-- /checkout-body -->
-
-      <div class="checkout-foot">
-        <div class="checkout-foot-total">
-          <span class="label">Total</span>
-          <span class="value" id="checkoutFootTotal">R$ 0,00</span>
-        </div>
-        <div class="checkout-foot-actions">
-          <button type="button" class="btn btn-ghost" onclick="closeCheckout()">Voltar</button>
-          <button type="submit" class="btn btn-gold" id="submitBtn" form="checkoutForm">Confirmar pedido</button>
-        </div>
+  <form id="checkoutForm" onsubmit="submitOrder(event)">
+    <div class="form-field">
+      <label>Nome completo *</label>
+      <input type="text" id="fNome" required placeholder="Seu nome" />
+    </div>
+    <div class="form-field">
+      <label>WhatsApp *</label>
+      <input type="tel" id="fWhats" required placeholder="(11) 99999-9999" />
+    </div>
+    <div class="form-field">
+      <label>Email</label>
+      <input type="email" id="fEmail" placeholder="seu@email.com" />
+    </div>
+    <!-- TIPO DE ENTREGA -->
+    <div class="form-field">
+      <label>Como quer receber? *</label>
+      <div class="payment-options">
+        <label class="payment-opt">
+          <input type="radio" name="tipoEntrega" value="entrega" required onclick="mostrarEntrega()" />
+          <span class="payment-opt-box">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 3h15v13H1zM16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
+            </svg>
+            <span style="flex:1;">
+              <strong>Entrega</strong>
+              <small style="display:block;margin-top:2px;color:var(--text-dim);">Motoboy — frete calculado pelo CEP</small>
+            </span>
+          </span>
+        </label>
+        <label class="payment-opt">
+          <input type="radio" name="tipoEntrega" value="retirada" onclick="mostrarRetirada()" />
+          <span class="payment-opt-box">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0116 0z"/><circle cx="12" cy="10" r="3"/>
+            </svg>
+            <span style="flex:1;">
+              <strong>Retirada no local</strong>
+              <small style="display:block;margin-top:2px;color:var(--text-dim);">Alpha Galerie · Alphaville · Frete grátis</small>
+            </span>
+            <span style="background:#2a5a2a;color:#6aba6a;padding:4px 10px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.1em;white-space:nowrap;">GRÁTIS</span>
+          </span>
+        </label>
       </div>
     </div>
+
+    <!-- CAMPOS DE ENDEREÇO (só aparecem se escolher entrega) -->
+    <div id="camposEntrega" style="display:none;">
+      <div class="form-field">
+        <label>CEP *</label>
+        <input type="text" id="fCep" placeholder="00000-000" maxlength="9"
+          oninput="mascaraCep(this)" />
+        <div id="cepStatus" style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;margin-top:6px;min-height:14px;"></div>
+      </div>
+      <!-- Frete calculado -->
+      <div id="freteBox" style="display:none;background:var(--bg);border:1px solid var(--line);padding:14px 16px;margin-bottom:14px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-dim);" id="freteLabel">Frete</span>
+          <span style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--gold);" id="freteValor">R$ 0,00</span>
+        </div>
+        <div id="freteInfo" style="font-size:11px;color:var(--text-faint);margin-top:4px;"></div>
+      </div>
+      <div class="form-field">
+        <label>Rua / Avenida</label>
+        <input type="text" id="fRua" placeholder="Nome da rua ou avenida" />
+      </div>
+      <div style="display:grid; grid-template-columns: 1fr 2fr; gap: 12px;">
+        <div class="form-field">
+          <label>Número</label>
+          <input type="text" id="fNumero" placeholder="123" />
+        </div>
+        <div class="form-field">
+          <label>Complemento</label>
+          <input type="text" id="fComplemento" placeholder="Apto, Bloco, Casa..." />
+        </div>
+      </div>
+      <div class="form-field">
+        <label>Bairro</label>
+        <input type="text" id="fBairro" placeholder="Bairro" />
+      </div>
+      <div class="form-field">
+        <label>Cidade</label>
+        <input type="text" id="fCidade" placeholder="Cidade" />
+      </div>
+    </div>
+
+    <div class="form-field">
+      <label>Observações</label>
+      <textarea id="fObs" placeholder="Alguma observação sobre o pedido"></textarea>
+    </div>
+
+    <!-- CUPOM DE DESCONTO -->
+    <div class="form-field">
+      <label>Cupom de desconto</label>
+      <div style="display:flex;gap:8px;">
+        <input type="text" id="fCupom" placeholder="Digite o código" style="flex:1;text-transform:uppercase;" oninput="this.value=this.value.toUpperCase()" />
+        <button type="button" onclick="aplicarCupom()" style="padding:10px 16px;background:var(--bg);border:1px solid var(--gold);color:var(--gold);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.15em;cursor:pointer;white-space:nowrap;">APLICAR</button>
+      </div>
+      <div id="cupomStatus" style="font-family:'JetBrains Mono',monospace;font-size:10px;margin-top:6px;min-height:14px;"></div>
+    </div>
+
+    <div class="form-field">
+      <label>Forma de pagamento *</label>
+      <div class="payment-options">
+        <label class="payment-opt">
+          <input type="radio" name="pagamento" value="pix" required onchange="atualizarTotalCheckout()" />
+          <span class="payment-opt-box">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+            <span style="flex:1;"><strong>Pix</strong></span>
+            <span style="background:var(--gold);color:#000;padding:4px 10px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.1em;white-space:nowrap;">5% OFF</span>
+          </span>
+        </label>
+        <label class="payment-opt">
+          <input type="radio" name="pagamento" value="cartao" onchange="atualizarTotalCheckout()" />
+          <span class="payment-opt-box">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/>
+            </svg>
+            <span style="flex:1;">
+              <strong>Cartão</strong>
+              <small style="display:block;margin-top:2px;color:var(--text-dim);">Crédito ou débito — até 12×</small>
+            </span>
+          </span>
+        </label>
+        <label class="payment-opt" id="optPagarRetirada" style="display:none;">
+          <input type="radio" name="pagamento" value="pagar_retirada" onchange="atualizarTotalCheckout()" />
+          <span class="payment-opt-box">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2C8 2 5 5 5 9c0 3 1.5 5.5 4 7l1 4h4l1-4c2.5-1.5 4-4 4-7 0-4-3-7-7-7z"/>
+            </svg>
+            <span style="flex:1;">
+              <strong>Pagar na retirada</strong>
+              <small style="display:block;margin-top:2px;color:var(--text-dim);">Pix ou maquininha no local</small>
+            </span>
+          </span>
+        </label>
+      </div>
+    </div>
+
+    <!-- FORMULÁRIO CARTÃO (aparece quando seleciona cartão) -->
+    <div id="cartaoForm" style="display:none;margin-top:16px;padding:16px;background:var(--bg);border:1px solid var(--line-soft);">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.15em;color:var(--gold);margin-bottom:14px;">DADOS DO CARTÃO</div>
+      <div class="form-field" style="margin-bottom:12px;">
+        <label style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.15em;color:var(--text-dim);display:block;margin-bottom:5px;">NÚMERO DO CARTÃO</label>
+        <div id="mp_card_number" style="background:#fff;border:1px solid var(--line-soft);padding:12px;height:44px;"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+        <div class="form-field">
+          <label style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.15em;color:var(--text-dim);display:block;margin-bottom:5px;">VALIDADE</label>
+          <div id="mp_expiration_date" style="background:#fff;border:1px solid var(--line-soft);padding:12px;height:44px;"></div>
+        </div>
+        <div class="form-field">
+          <label style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.15em;color:var(--text-dim);display:block;margin-bottom:5px;">CVV</label>
+          <div id="mp_security_code" style="background:#fff;border:1px solid var(--line-soft);padding:12px;height:44px;"></div>
+        </div>
+      </div>
+      <div class="form-field" style="margin-bottom:12px;">
+        <label style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.15em;color:var(--text-dim);display:block;margin-bottom:5px;">NOME NO CARTÃO</label>
+        <div id="mp_cardholder_name" style="background:#fff;border:1px solid var(--line-soft);padding:12px;height:44px;"></div>
+      </div>
+      <div class="form-field" style="margin-bottom:12px;">
+        <label style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.15em;color:var(--text-dim);display:block;margin-bottom:5px;">PARCELAS</label>
+        <select id="mp_installments" style="width:100%;background:#fff;border:1px solid var(--line-soft);color:#000;padding:10px;font-family:'JetBrains Mono',monospace;font-size:12px;">
+          <option value="1">1× sem juros</option>
+          <option value="2">2× sem juros</option>
+          <option value="3">3× sem juros</option>
+          <option value="4">4× sem juros</option>
+          <option value="5">5× sem juros</option>
+          <option value="6">6× sem juros</option>
+          <option value="7">7× com juros</option>
+          <option value="8">8× com juros</option>
+          <option value="9">9× com juros</option>
+          <option value="10">10× com juros</option>
+          <option value="11">11× com juros</option>
+          <option value="12">12× com juros</option>
+        </select>
+      </div>
+      <div style="font-size:11px;color:var(--text-faint);text-align:center;">🔒 Pagamento seguro via Mercado Pago</div>
+    </div>
+
+    <div class="checkout-summary">
+      <h4>Resumo do pedido</h4>
+      <div id="checkoutItems"></div>
+      <div id="pixDiscountRow" style="display:none;padding:8px 0;border-top:1px solid var(--line-soft);">
+        <div class="summary-line">
+          <span style="color:var(--gold);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;">DESCONTO PIX (5%)</span>
+          <strong style="color:var(--gold);" id="pixDiscountAmt">— R$ 0,00</strong>
+        </div>
+      </div>
+      <div id="freteResumoRow" class="summary-line" style="display:none;border-top:1px solid var(--line-soft);padding-top:8px;">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;color:var(--text-dim);">FRETE</span>
+        <strong id="freteResumoValor">R$ 0,00</strong>
+      </div>
+      <div id="cupomResumoRow" class="summary-line" style="display:none;">
+        <span style="color:#4ade80;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;">CUPOM</span>
+        <strong style="color:#4ade80;" id="cupomResumoValor">— R$ 0,00</strong>
+      </div>
+      <div class="summary-total">
+        <span class="label">Total</span>
+        <span class="value" id="checkoutTotal">R$ 0,00</span>
+      </div>
+    </div>
+  </form>
+  </div><!-- /checkout-body -->
+
+  <div class="checkout-foot">
+    <div class="checkout-foot-total">
+      <span class="label">Total</span>
+      <span class="value" id="checkoutFootTotal">R$ 0,00</span>
+    </div>
+    <div class="checkout-foot-actions">
+      <button type="button" class="btn btn-ghost" onclick="closeCheckout()">Voltar</button>
+      <button type="submit" class="btn btn-gold" id="submitBtn" form="checkoutForm">Confirmar pedido</button>
+    </div>
+  </div>
+</div>
+```
+
   </div>
 
   <!-- SUCCESS MODAL -->
+
   <div class="success-modal" id="successModal">
     <div class="success-box">
       <div class="success-icon">
@@ -2144,49 +2166,53 @@
       <p id="successMsg">Seu pedido foi registrado com sucesso.</p>
       <div class="order-number" id="orderNumber">#0000</div>
 
-      <!-- QR Code Pix (aparece quando pagamento é Pix) -->
-      <div id="pixArea" style="display:none; margin: 16px 0; padding: 16px; background: var(--bg); border: 1px solid var(--gold);">
-        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.15em;color:var(--gold);margin-bottom:4px;text-align:center;">PAGAMENTO VIA PIX</div>
-        <div id="pixValorLabel" style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text);text-align:center;margin-bottom:12px;font-weight:700;"></div>
+```
+  <!-- QR Code Pix (aparece quando pagamento é Pix) -->
+  <div id="pixArea" style="display:none; margin: 16px 0; padding: 16px; background: var(--bg); border: 1px solid var(--gold);">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.15em;color:var(--gold);margin-bottom:4px;text-align:center;">PAGAMENTO VIA PIX</div>
+    <div id="pixValorLabel" style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text);text-align:center;margin-bottom:12px;font-weight:700;"></div>
 
-        <!-- QR Code -->
-        <div id="pixQrCode" style="display:flex;justify-content:center;margin-bottom:14px;border-radius:4px;overflow:hidden;"></div>
+    <!-- QR Code -->
+    <div id="pixQrCode" style="display:flex;justify-content:center;margin-bottom:14px;border-radius:4px;overflow:hidden;"></div>
 
-        <!-- Instrução 1: QR Code -->
-        <div style="font-size:12px;color:var(--text-dim);text-align:center;margin-bottom:12px;">
-          📱 Escaneie o QR Code <strong>ou</strong> copie a chave abaixo
-        </div>
-
-        <!-- Chave Pix simples para copiar -->
-        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.15em;color:var(--text-faint);margin-bottom:6px;text-align:center;">CHAVE PIX (CELULAR)</div>
-        <div style="display:flex;gap:8px;align-items:center;">
-          <input id="pixKeyDisplay" readonly style="flex:1;background:var(--bg);border:1px solid var(--gold);color:var(--text);padding:10px;font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;text-align:center;" value="" />
-          <button onclick="copiarPix()" style="padding:10px 14px;background:var(--gold);color:#000;border:none;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap;letter-spacing:0.1em;">COPIAR</button>
-        </div>
-        <div id="pixCopiadoMsg" style="color:#4ade80;font-size:11px;text-align:center;margin-top:6px;display:none;">✓ Chave copiada! Abra seu banco → Pix → Chave e cole</div>
-
-        <!-- Instrução passo a passo -->
-        <div style="margin-top:12px;padding:10px;background:rgba(201,169,97,0.06);border-left:2px solid var(--gold);">
-          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.15em;color:var(--gold);margin-bottom:6px;">COMO PAGAR</div>
-          <div style="font-size:12px;color:var(--text-dim);line-height:1.8;">
-            1. Abra o app do seu banco<br>
-            2. Vá em <strong>Pix → Pagar → Chave Pix</strong><br>
-            3. Cole a chave copiada<br>
-            4. Digite o valor <span id="pixValorInstrucao" style="color:var(--gold);font-weight:700;"></span><br>
-            5. Confirme e envie o comprovante pelo WhatsApp
-          </div>
-        </div>
-        <div style="font-size:11px;color:var(--text-faint);text-align:center;margin-top:10px;">Após pagar, confirme pelo WhatsApp ↓</div>
-      </div>
-
-      <a href="#" id="waLink" class="btn btn-gold" style="display:inline-block;margin-top:8px;" target="_blank" rel="noopener">
-        Confirmar pelo WhatsApp →
-      </a>
-      <button onclick="closeSuccess()" class="btn btn-ghost" style="display:block;margin:12px auto 0;font-size:11px;color:var(--text-faint);">Continuar navegando</button>
+    <!-- Instrução 1: QR Code -->
+    <div style="font-size:12px;color:var(--text-dim);text-align:center;margin-bottom:12px;">
+      📱 Escaneie o QR Code <strong>ou</strong> copie a chave abaixo
     </div>
+
+    <!-- Chave Pix simples para copiar -->
+    <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.15em;color:var(--text-faint);margin-bottom:6px;text-align:center;">CHAVE PIX (CELULAR)</div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <input id="pixKeyDisplay" readonly style="flex:1;background:var(--bg);border:1px solid var(--gold);color:var(--text);padding:10px;font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;text-align:center;" value="" />
+      <button onclick="copiarPix()" style="padding:10px 14px;background:var(--gold);color:#000;border:none;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap;letter-spacing:0.1em;">COPIAR</button>
+    </div>
+    <div id="pixCopiadoMsg" style="color:#4ade80;font-size:11px;text-align:center;margin-top:6px;display:none;">✓ Chave copiada! Abra seu banco → Pix → Chave e cole</div>
+
+    <!-- Instrução passo a passo -->
+    <div style="margin-top:12px;padding:10px;background:rgba(201,169,97,0.06);border-left:2px solid var(--gold);">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.15em;color:var(--gold);margin-bottom:6px;">COMO PAGAR</div>
+      <div style="font-size:12px;color:var(--text-dim);line-height:1.8;">
+        1. Abra o app do seu banco<br>
+        2. Vá em <strong>Pix → Pagar → Chave Pix</strong><br>
+        3. Cole a chave copiada<br>
+        4. Digite o valor <span id="pixValorInstrucao" style="color:var(--gold);font-weight:700;"></span><br>
+        5. Confirme e envie o comprovante pelo WhatsApp
+      </div>
+    </div>
+    <div style="font-size:11px;color:var(--text-faint);text-align:center;margin-top:10px;">Após pagar, confirme pelo WhatsApp ↓</div>
+  </div>
+
+  <a href="#" id="waLink" class="btn btn-gold" style="display:inline-block;margin-top:8px;" target="_blank" rel="noopener">
+    Confirmar pelo WhatsApp →
+  </a>
+  <button onclick="closeSuccess()" class="btn btn-ghost" style="display:block;margin:12px auto 0;font-size:11px;color:var(--text-faint);">Continuar navegando</button>
+</div>
+```
+
   </div>
 
   <!-- Floating WhatsApp -->
+
   <a href="https://wa.me/5511942920076?text=Ol%C3%A1!%20Vim%20pelo%20site%20da%20Alpha%20Galerie." class="float-wa" target="_blank" rel="noopener" aria-label="WhatsApp">
     <svg viewBox="0 0 24 24" fill="currentColor">
       <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.464 3.488"/>
@@ -2194,12 +2220,19 @@
   </a>
 
   <!-- Supabase JS via CDN -->
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <!-- Mercado Pago SDK -->
+
   <script src="https://sdk.mercadopago.com/js/v2"></script>
+
   <!-- QR Code generator -->
+
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+
   <!-- Google Identity Services -->
+
   <!-- Google login removido - causa origin_mismatch com domínio customizado -->
 
   <script>
@@ -3862,6 +3895,7 @@
   </script>
 
   <!-- MODAL DE VARIAÇÕES -->
+
   <div id="variacoesOverlay" onclick="fecharVariacoes()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);z-index:2000;align-items:center;justify-content:center;padding:24px;"></div>
   <div id="variacoesModal" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2001;background:#111;border:1px solid #c9a961;max-width:420px;width:calc(100% - 48px);padding:32px;">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;">
