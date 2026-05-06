@@ -2022,7 +2022,7 @@
               console.log(`📊 Tentando tabela: ${tabela}`);
               
               // Tenta carregar SEM ordenação primeiro
-              let resp = await sb.from(tabela).select('*').limit(100);
+              let resp = await sb.from(tabela).select('*').limit(500);
               console.log(`Resposta ${tabela} (sem order):`, resp);
               
               if (resp.error) {
