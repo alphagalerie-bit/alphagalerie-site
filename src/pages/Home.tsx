@@ -8,6 +8,7 @@ import CartDrawer from '../components/CartDrawer';
 import ProductModal from '../components/ProductModal';
 import FloatingWhatsApp from '../components/FloatingWhatsApp';
 import Footer from '../components/Footer';
+import HempSection from '../components/HempSection';
 
 const CheckoutModal = lazy(() => import('../components/checkout/CheckoutModal'));
 
@@ -38,7 +39,7 @@ export default function Home() {
       <main id="main-content">
         <ProductGrid categoryId={categoryId} onCategoryChange={setCategoryId} />
       </main>
-
+      <HempSection />
       <Footer />
 
       <CartDrawer
