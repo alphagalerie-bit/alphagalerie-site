@@ -52,6 +52,20 @@ export function useCheckout() {
         error = result.error;
       }
 
+      // Fallback: colunas de endereço podem não existir na tabela
+      const addressCols = ['bairro', 'cep', 'endereco', 'cidade', 'estado', 'complemento'];
+      if (error && addressCols.some((col) => error!.message?.includes(`'${col}'`))) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { bairro: _b, cep: _c, endereco: _e, cidade: _ci, estado: _es, complemento: _co, ...payloadSemEndereco } = payload;
+        const result = await supabase
+          .from('pedidos')
+          .insert(payloadSemEndereco)
+          .select()
+          .single();
+        data = result.data;
+        error = result.error;
+      }
+
       if (error) throw error;
 
       return { success: true, pedido: data };
