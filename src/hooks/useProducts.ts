@@ -39,35 +39,10 @@ async function fetchProducts(
   if (produtosError) throw new Error(produtosError.message);
 
   const produtos = (produtosRaw ?? []) as Omit<Produto, '_variacoes'>[];
-  if (produtos.length === 0) return { produtos: [], total: count ?? 0, page };
-
-  // Busca variações apenas dos produtos desta página (máx PAGE_SIZE ids)
-  const ids = produtos.map((p) => p.id);
-
-  const { data: variacoesRaw, error: variacoesError } = await supabase
-    .from('produto_variacoes')
-    .select('*')
-    .in('produto_id', ids)
-    .eq('ativo', true)
-    .order('ordem')
-    .order('id');
-
-  if (variacoesError) throw new Error(variacoesError.message);
-
-  const variacoes = (variacoesRaw ?? []) as Variacao[];
-
-  const variacoesByProduto = variacoes.reduce<Record<number, Variacao[]>>(
-    (acc, v) => {
-      if (!acc[v.produto_id]) acc[v.produto_id] = [];
-      acc[v.produto_id].push(v);
-      return acc;
-    },
-    {}
-  );
 
   const produtosComVariacoes = produtos.map((p) => ({
     ...p,
-    _variacoes: variacoesByProduto[p.id] ?? [],
+    _variacoes: [] as Variacao[],
   })) as Produto[];
 
   return { produtos: produtosComVariacoes, total: count ?? 0, page };

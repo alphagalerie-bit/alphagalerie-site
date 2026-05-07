@@ -17,12 +17,11 @@ const FOCUSABLE =
 async function fetchProduto(id: number): Promise<Produto> {
   const { data, error } = await supabase
     .from('produtos')
-    .select('*, categorias(*), produto_variacoes(*)')
+    .select('*, categorias(*)')
     .eq('id', id)
     .single();
   if (error) throw error;
-  // Map produto_variacoes to _variacoes
-  return { ...data, _variacoes: data.produto_variacoes ?? [] } as Produto;
+  return { ...data, _variacoes: [] } as Produto;
 }
 
 export default function ProductModal({ produtoId, onClose }: ProductModalProps) {
