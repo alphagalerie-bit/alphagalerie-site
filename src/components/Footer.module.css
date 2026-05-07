@@ -116,3 +116,18 @@
     align-items: flex-start;
   }
 }
+
+.warning {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: rgba(244, 244, 244, 0.35);
+}
+
+.version {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: rgba(244, 244, 244, 0.2);
+  letter-spacing: 0.05em;
+  margin-left: 12px;
+}

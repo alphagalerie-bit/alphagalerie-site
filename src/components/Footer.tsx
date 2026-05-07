@@ -3,6 +3,7 @@ import styles from './Footer.module.css';
 
 const WHATSAPP_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER as string;
 const CURRENT_YEAR = new Date().getFullYear();
+const APP_VERSION = import.meta.env.VITE_APP_VERSION ?? new Date().toISOString().slice(0, 10);
 
 const Footer: FC = () => {
   return (
@@ -48,7 +49,11 @@ const Footer: FC = () => {
       </div>
 
       <div className={styles.copyright}>
-        <p>&copy; {CURRENT_YEAR} alpha.galerie — Todos os direitos reservados.</p>
+        <p>
+          &copy; {CURRENT_YEAR} Alpha Galerie · Todos os direitos reservados
+          <span className={styles.version}>v{APP_VERSION}</span>
+        </p>
+        <p className={styles.warning}>⚠ Produtos destinados a maiores de 18 anos</p>
       </div>
     </footer>
   );
