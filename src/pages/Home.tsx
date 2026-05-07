@@ -1,5 +1,6 @@
 import { lazy, Suspense, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import AnnouncementBar from '../components/AnnouncementBar';
 import Header from '../components/Header';
 import ProductGrid from '../components/ProductGrid';
 import CartDrawer from '../components/CartDrawer';
@@ -28,6 +29,7 @@ export default function Home() {
 
   return (
     <>
+      <AnnouncementBar />
       <Header onOpenCart={() => setCartOpen(true)} />
 
       <section
