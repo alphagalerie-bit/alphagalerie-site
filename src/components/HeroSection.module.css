@@ -82,6 +82,15 @@
   box-shadow: 0 0 30px rgba(201, 169, 97, 0.25);
 }
 
+.cta:focus-visible {
+  outline: 2px solid #c9a961;
+  outline-offset: 3px;
+}
+
+.leadEmphasis {
+  color: #f4f4f4;
+}
+
 .meta {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

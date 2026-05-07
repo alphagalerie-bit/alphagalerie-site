@@ -17,7 +17,7 @@ export default function HeroSection() {
         <p className={styles.lead}>
           Headshop, charutaria, arguile e lifestyle reunidos numa curadoria
           que respeita quem entende.{' '}
-          <strong style={{ color: '#f4f4f4' }}>
+          <strong className={styles.leadEmphasis}>
             Atendimento direto, curadoria de verdade.
           </strong>
         </p>
