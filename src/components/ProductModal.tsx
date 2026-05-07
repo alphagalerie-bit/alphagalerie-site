@@ -1,7 +1,9 @@
+// src/components/ProductModal.tsx
 import { useEffect, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '../lib/supabase';
 import { useCartStore } from '../store/cart';
+import { formatCurrency } from '../lib/format';
 import type { Produto } from '../types';
 
 interface ProductModalProps {
@@ -9,16 +11,18 @@ interface ProductModalProps {
   onClose: () => void;
 }
 
-const FOCUSABLE = 'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
+const FOCUSABLE =
+  'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
 
 async function fetchProduto(id: number): Promise<Produto> {
   const { data, error } = await supabase
     .from('produtos')
-    .select('*, categorias(*)')
+    .select('*, categorias(*), produto_variacoes(*)')
     .eq('id', id)
     .single();
   if (error) throw error;
-  return { ...data, _variacoes: [] } as Produto;
+  // Map produto_variacoes to _variacoes
+  return { ...data, _variacoes: data.produto_variacoes ?? [] } as Produto;
 }
 
 export default function ProductModal({ produtoId, onClose }: ProductModalProps) {
@@ -71,7 +75,7 @@ export default function ProductModal({ produtoId, onClose }: ProductModalProps) 
       try {
         await navigator.share({ title: produto.nome, text: `${produto.nome} — Alpha Galerie`, url: shareUrl });
         return;
-      } catch { /* fallthrough */ }
+      } catch { /* fall through */ }
     }
     try { await navigator.clipboard.writeText(shareUrl); } catch { /* silent */ }
   }
@@ -82,28 +86,40 @@ export default function ProductModal({ produtoId, onClose }: ProductModalProps) 
     onClose();
   }
 
-  const fmt = (v: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
+  const modalStyle: React.CSSProperties = {
+    position: 'fixed',
+    top: '50%', left: '50%',
+    transform: 'translate(-50%,-50%)',
+    width: '90%', maxWidth: 640,
+    maxHeight: '90vh',
+    background: '#0a0a0a',
+    border: '1px solid rgba(201,169,97,0.2)',
+    borderRadius: 4,
+    display: 'flex', flexDirection: 'column',
+    zIndex: 351,
+    overflowY: 'auto',
+  };
 
   return (
     <>
-      <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 300 }} onPointerDown={onClose} aria-hidden="true" />
+      <div
+        style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 350 }}
+        onPointerDown={onClose}
+        aria-hidden="true"
+      />
+
       <div
         ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-label={produto?.nome ?? 'Produto'}
-        style={{
-          position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
-          background: '#0a0a0a', border: '1px solid rgba(201,169,97,0.3)', borderRadius: 4,
-          width: '90%', maxWidth: 640, maxHeight: '90vh', overflowY: 'auto', zIndex: 301,
-          padding: '1.5rem',
-        }}
+        style={modalStyle}
       >
         <button
           type="button"
-          onClick={onClose}
           aria-label="Fechar"
-          style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'none', border: 'none', cursor: 'pointer', color: '#f4f4f4', display: 'flex' }}
+          onClick={onClose}
+          style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(244,244,244,0.6)', display: 'flex', zIndex: 1 }}
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
@@ -111,56 +127,72 @@ export default function ProductModal({ produtoId, onClose }: ProductModalProps) 
         </button>
 
         {isLoading && (
-          <div role="status" aria-live="polite" style={{ padding: '3rem', textAlign: 'center', color: 'rgba(244,244,244,0.5)' }}>
+          <div role="status" aria-live="polite" style={{ padding: '3rem', textAlign: 'center', color: 'rgba(244,244,244,0.4)', fontFamily: 'Inter, sans-serif' }}>
             Carregando...
           </div>
         )}
 
         {!isLoading && produto && (
-          <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: produto.imagem_url ? '1fr 1fr' : '1fr', gap: 0 }}>
             {produto.imagem_url && (
-              <div style={{ flex: '0 0 auto' }}>
-                <img src={produto.imagem_url} alt={produto.nome} style={{ width: 220, height: 220, objectFit: 'cover', borderRadius: 2 }} />
+              <div style={{ aspectRatio: '1/1', overflow: 'hidden', background: '#1a1a1a' }}>
+                <img
+                  src={produto.imagem_url}
+                  alt={produto.nome}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                />
               </div>
             )}
-            <div style={{ flex: 1, minWidth: 200 }}>
-              <p style={{ fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#c9a961', margin: '0 0 0.25rem' }}>{produto.marca}</p>
-              <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.5rem', color: '#f4f4f4', margin: '0 0 0.75rem' }}>{produto.nome}</h2>
+
+            <div style={{ padding: '2rem 1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div>
+                <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.65rem', fontWeight: 600, letterSpacing: '0.15em', textTransform: 'uppercase', color: '#c9a961', margin: '0 0 0.5rem' }}>
+                  {produto.marca}
+                </p>
+                <h2 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.5rem', fontWeight: 600, color: '#f4f4f4', margin: 0, lineHeight: 1.3 }}>
+                  {produto.nome}
+                </h2>
+              </div>
+
               {produto.descricao && (
-                <p style={{ fontSize: '0.875rem', color: 'rgba(244,244,244,0.65)', lineHeight: 1.6, marginBottom: '1rem' }}>{produto.descricao}</p>
+                <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.875rem', color: 'rgba(244,244,244,0.6)', lineHeight: 1.7, margin: 0 }}>
+                  {produto.descricao}
+                </p>
               )}
-              <div style={{ marginBottom: '1rem' }}>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
                 {produto.preco_pix && (
-                  <div>
-                    <span style={{ fontSize: '1.25rem', fontWeight: 700, color: '#f4f4f4' }}>{fmt(produto.preco_pix)}</span>
-                    <span style={{ fontSize: '0.75rem', color: 'rgba(244,244,244,0.45)', marginLeft: '0.35rem' }}>no PIX</span>
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem' }}>
+                    <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '1.25rem', fontWeight: 700, color: '#f4f4f4' }}>
+                      {formatCurrency(produto.preco_pix)}
+                    </span>
+                    <small style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.7rem', color: 'rgba(244,244,244,0.4)', letterSpacing: '0.08em' }}>PIX</small>
                   </div>
                 )}
-                <div>
-                  <span style={{ fontSize: produto.preco_pix ? '1rem' : '1.25rem', fontWeight: produto.preco_pix ? 400 : 700, color: produto.preco_pix ? 'rgba(244,244,244,0.45)' : '#f4f4f4' }}>{fmt(produto.preco)}</span>
-                  {produto.preco_pix && <span style={{ fontSize: '0.75rem', color: 'rgba(244,244,244,0.3)', marginLeft: '0.35rem' }}>no cartão</span>}
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem' }}>
+                  <span style={{ fontFamily: 'Inter, sans-serif', fontSize: produto.preco_pix ? '0.9rem' : '1.25rem', fontWeight: produto.preco_pix ? 400 : 700, color: produto.preco_pix ? 'rgba(244,244,244,0.45)' : '#f4f4f4' }}>
+                    {formatCurrency(produto.preco)}
+                  </span>
+                  <small style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.7rem', color: 'rgba(244,244,244,0.4)', letterSpacing: '0.08em' }}>cartao</small>
                 </div>
               </div>
-              <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: 'auto' }}>
                 <button
                   type="button"
                   onClick={handleAddToCart}
                   disabled={!produto.ativo}
                   aria-label={`Adicionar ${produto.nome} ao carrinho`}
-                  style={{
-                    padding: '0.75rem 1.25rem', background: '#c9a961', border: 'none', borderRadius: 2,
-                    cursor: produto.ativo ? 'pointer' : 'not-allowed', fontWeight: 700, fontSize: '0.75rem',
-                    letterSpacing: '0.1em', textTransform: 'uppercase', color: '#000',
-                    opacity: produto.ativo ? 1 : 0.4,
-                  }}
+                  style={{ padding: '0.875rem 1rem', background: produto.ativo ? '#c9a961' : 'rgba(244,244,244,0.1)', color: produto.ativo ? '#0a0a0a' : 'rgba(244,244,244,0.35)', border: 'none', fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: '0.75rem', letterSpacing: '0.12em', textTransform: 'uppercase', cursor: produto.ativo ? 'pointer' : 'not-allowed', borderRadius: 2 }}
                 >
-                  {produto.ativo ? 'Adicionar ao Carrinho' : 'Esgotado'}
+                  {produto.ativo ? 'ADICIONAR AO CARRINHO' : 'ESGOTADO'}
                 </button>
+
                 <button
                   type="button"
                   onClick={handleShare}
                   aria-label="Compartilhar produto"
-                  style={{ padding: '0.75rem 1rem', background: 'transparent', border: '1px solid rgba(201,169,97,0.4)', borderRadius: 2, cursor: 'pointer', color: '#c9a961', fontSize: '0.75rem', letterSpacing: '0.08em', display: 'flex', alignItems: 'center', gap: '0.35rem' }}
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '0.75rem 1rem', background: 'transparent', border: '1px solid rgba(244,244,244,0.15)', color: 'rgba(244,244,244,0.6)', fontFamily: 'Inter, sans-serif', fontSize: '0.75rem', letterSpacing: '0.08em', cursor: 'pointer', borderRadius: 2 }}
                 >
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" />
