@@ -2372,6 +2372,7 @@
     let allCategories = [];
     let cart = JSON.parse(localStorage.getItem('alpha_cart') || '[]');
     let currentFilter = 'todos';
+    let productsByCategory = {};
 
     // ============================================
     // FORMATAR DINHEIRO
@@ -2391,66 +2392,11 @@
       renderProducts();
     }
 
-    // ═══════════════════════════════════════════════════════════════
-    // CACHE + FALLBACK (v2026.05.07-C)
-    // - Mostra produtos do cache imediatamente (se existir)
-    // - Atualiza no fundo quando cache fica antigo
-    // - Timeout de 12s com botão "tentar novamente" (sem tela infinita)
-    // ═══════════════════════════════════════════════════════════════
-
-    const CACHE_KEY = 'ag_cache_v1';
-    const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutos
-
-    function readCache() {
-      try {
-        const raw = localStorage.getItem(CACHE_KEY);
-        if (!raw) return null;
-        const parsed = JSON.parse(raw);
-        if (!parsed || !parsed.ts || !parsed.data) return null;
-        return parsed;
-      } catch (e) { return null; }
-    }
-
-    function writeCache(data) {
-      try {
-        localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data: data }));
-      } catch (e) { console.warn('Cache write fail:', e); }
-    }
-
     function withTimeout(promise, ms, label) {
       return Promise.race([
         promise,
         new Promise((_, reject) => setTimeout(() => reject(new Error('TIMEOUT_' + (label || ''))), ms))
       ]);
-    }
-
-    function applyData(d) {
-      allCategories = d.categorias || [];
-      allProducts = d.produtos || [];
-
-      // Injeta categorias em cada produto pra p.categorias.slug funcionar
-      if (allCategories.length) {
-        const catMap = {};
-        allCategories.forEach(c => { catMap[c.id] = c; });
-        allProducts.forEach(p => {
-          if (p.categoria_id && catMap[p.categoria_id]) p.categorias = catMap[p.categoria_id];
-        });
-      }
-
-      // Variações
-      if (d.variacoes && d.variacoes.length) {
-        const todasVars = d.variacoes;
-        allProducts.forEach(p => {
-          p._variacoes = todasVars.filter(v => v.produto_id === p.id);
-        });
-      }
-
-      // Sort por nome
-      allProducts.sort((a, b) => (a.nome || '').toLowerCase().localeCompare((b.nome || '').toLowerCase()));
-
-      window._allProductsRef = allProducts;
-      renderFilters();
-      renderProducts();
     }
 
     function showLoadError() {
@@ -2462,125 +2408,124 @@
         '</div>';
     }
 
-    async function fetchFreshData() {
-      const t0 = performance.now();
-      console.log('🔍 [v2026.05.07-C] Buscando dados frescos do banco...');
+    async function fetchCategories() {
+      const { data, error } = await sb.from('categorias').select('*').eq('ativo', true).order('ordem');
+      if (error) throw error;
+      return data || [];
+    }
 
-      const PROD_COLS = 'id,nome,codigo,codigo_barras,marca,descricao,preco,preco_pix,categoria_id,subcategoria,estoque,ativo,destaque,imagem_url,criado_em';
+    async function fetchCategoryProducts(categoryId) {
+      const PROD_COLS = 'id,nome,marca,preco,preco_pix,categoria_id,subcategoria,estoque,ativo,destaque,imagem_url';
+      const { data: produtos, error } = await sb
+        .from('produtos').select(PROD_COLS)
+        .eq('ativo', true).eq('categoria_id', categoryId);
+      if (error) throw error;
 
-      // Categorias e produtos em paralelo
-      const [catsRes, prodsRes] = await Promise.all([
-        sb.from('categorias').select('*').eq('ativo', true).order('ordem'),
-        sb.from('produtos').select(PROD_COLS).eq('ativo', true).limit(600)
-      ]);
-
-      if (prodsRes.error) throw prodsRes.error;
-
-      const categorias = catsRes.data || [];
-      const produtos = prodsRes.data || [];
-
-      // Variações depois (depende dos IDs)
       let variacoes = [];
-      if (produtos.length) {
+      if (produtos && produtos.length) {
         const ids = produtos.map(p => p.id);
-        const varsRes = await sb
-          .from('produto_variacoes')
-          .select('*')
-          .in('produto_id', ids)
-          .eq('ativo', true)
-          .order('ordem')
-          .order('id');
-        variacoes = varsRes.data || [];
+        const { data: vars } = await sb
+          .from('produto_variacoes').select('*')
+          .in('produto_id', ids).eq('ativo', true).order('ordem').order('id');
+        variacoes = vars || [];
       }
-
-      const t1 = performance.now();
-      console.log('✅ [v2026.05.07-C] Dados frescos em', Math.round(t1 - t0), 'ms.',
-                  'Produtos:', produtos.length, '· Variações:', variacoes.length);
-
-      return { categorias, produtos, variacoes };
+      return { produtos: produtos || [], variacoes };
     }
 
-    async function loadData() {
-      // 1. Tenta cache primeiro (instantâneo se existir)
-      const cached = readCache();
-      const cacheValid = cached && (Date.now() - cached.ts < CACHE_TTL_MS);
-
-      if (cached && cached.data && cached.data.produtos && cached.data.produtos.length) {
-        console.log('⚡ [v2026.05.07-C] Renderizando do cache (idade:',
-                    Math.round((Date.now() - cached.ts) / 1000), 's)');
-        applyData(cached.data);
-        checkProductFromUrl();
-
-        // Se cache ainda válido, NÃO atualiza (economiza requests)
-        if (cacheValid) return;
-
-        // Cache antigo: atualiza em background
-        try {
-          const fresh = await withTimeout(fetchFreshData(), 12000, 'fresh-bg');
-          writeCache(fresh);
-          applyData(fresh);
-        } catch (e) {
-          console.warn('Atualização em background falhou (cache continua sendo usado):', e.message);
-        }
-        return;
-      }
-
-      // 2. Sem cache — busca do zero com timeout amigável
-      try {
-        const fresh = await withTimeout(fetchFreshData(), 12000, 'fresh-cold');
-        writeCache(fresh);
-        applyData(fresh);
-        checkProductFromUrl();
-      } catch (e) {
-        console.error('❌ [v2026.05.07-C] Falha ao carregar:', e.message);
-        showLoadError();
-      }
-    }
-
-    function renderFilters() {
-      const wrap = document.getElementById('filters');
-      const buttons = ['<button class="filter-btn active" data-cat="todos" onclick="filterCat(\'todos\')">Todos</button>'];
-      allCategories.forEach(c => {
-        buttons.push(`<button class="filter-btn" data-cat="${c.slug}" onclick="filterCat('${c.slug}')">${c.nome}</button>`);
+    function applyCategory(cat, { produtos, variacoes }) {
+      produtos.forEach(p => {
+        p.categorias = cat;
+        p._variacoes = variacoes.filter(v => v.produto_id === p.id);
       });
-      wrap.innerHTML = buttons.join('');
-      // Esconde subcategorias inicialmente
-      document.getElementById('subfilters').innerHTML = '';
-      document.getElementById('subfilters').style.display = 'none';
-    }
+      produtos.sort((a, b) => (a.nome || '').toLowerCase().localeCompare((b.nome || '').toLowerCase()));
 
-    function filterCat(slug) {
-      currentFilter = slug;
-      currentSubFilter = 'todos';
-      document.querySelectorAll('.filter-btn').forEach(b => {
-        b.classList.toggle('active', b.dataset.cat === slug);
-      });
+      allProducts = produtos;
+      window._allProductsRef = allProducts;
 
-      // Mostrar subcategorias se não for "todos"
+      const subs = [...new Set(
+        produtos
+          .filter(p => p.subcategoria && p.subcategoria.toLowerCase() !== 'especial')
+          .map(p => p.subcategoria)
+      )].sort();
+
       const subWrap = document.getElementById('subfilters');
-      if (slug !== 'todos') {
-        const cat = allCategories.find(c => c.slug === slug);
-        const subs = [...new Set(
-          allProducts
-            .filter(p => p.categorias && p.categorias.slug === slug && p.subcategoria)
-            .filter(p => (p.subcategoria || '').toLowerCase() !== 'especial') // oculta especial
-            .map(p => p.subcategoria)
-        )].sort();
-
-        if (subs.length > 1) {
-          subWrap.style.display = 'flex';
-          subWrap.innerHTML = `<button class="filter-btn active" data-sub="todos" onclick="filterSub('todos')">Todos</button>` +
-            subs.map(s => `<button class="filter-btn" data-sub="${s}" onclick="filterSub('${s}')">${s}</button>`).join('');
-        } else {
-          subWrap.style.display = 'none';
-          subWrap.innerHTML = '';
-        }
+      if (subs.length > 1) {
+        subWrap.style.display = 'flex';
+        subWrap.innerHTML =
+          '<button class="filter-btn active" data-sub="todos" onclick="filterSub(\'todos\')">Todos</button>' +
+          subs.map(s => `<button class="filter-btn" data-sub="${s}" onclick="filterSub('${s}')">${s}</button>`).join('');
       } else {
         subWrap.style.display = 'none';
         subWrap.innerHTML = '';
       }
 
       renderProducts();
+    }
+
+    async function loadCategoryProducts(slug) {
+      const cat = allCategories.find(c => c.slug === slug);
+      if (!cat) return;
+
+      currentFilter = slug;
+      currentSubFilter = 'todos';
+
+      document.querySelectorAll('#filters .filter-btn').forEach(b =>
+        b.classList.toggle('active', b.dataset.cat === slug)
+      );
+      document.getElementById('subfilters').innerHTML = '';
+      document.getElementById('subfilters').style.display = 'none';
+
+      const grid = document.getElementById('productsGrid');
+      grid.innerHTML = '<div style="text-align:center;padding:60px;color:var(--text-faint);font-family:\'JetBrains Mono\',monospace;font-size:12px;letter-spacing:0.1em;">CARREGANDO...</div>';
+
+      if (productsByCategory[cat.id]) {
+        applyCategory(cat, productsByCategory[cat.id]);
+        return;
+      }
+
+      try {
+        const result = await withTimeout(fetchCategoryProducts(cat.id), 12000, 'cat-' + slug);
+        productsByCategory[cat.id] = result;
+        applyCategory(cat, result);
+      } catch (e) {
+        console.error('Falha ao carregar categoria:', e.message);
+        grid.innerHTML =
+          '<div style="text-align:center;padding:40px;">' +
+          '<p style="margin-bottom:16px;">Erro ao carregar produtos desta categoria.</p>' +
+          `<button onclick="loadCategoryProducts('${slug}')" style="background:var(--gold);color:#000;border:none;padding:12px 28px;border-radius:4px;cursor:pointer;font-weight:600;">Tentar novamente</button>` +
+          '</div>';
+      }
+    }
+
+    async function loadData() {
+      const grid = document.getElementById('productsGrid');
+      grid.innerHTML = '<div style="text-align:center;padding:60px;color:var(--text-faint);font-family:\'JetBrains Mono\',monospace;font-size:12px;letter-spacing:0.1em;">CARREGANDO...</div>';
+
+      try {
+        allCategories = await withTimeout(fetchCategories(), 8000, 'cats');
+        renderFilters();
+        if (allCategories.length > 0) {
+          await loadCategoryProducts(allCategories[0].slug);
+        }
+        checkProductFromUrl();
+      } catch (e) {
+        console.error('❌ Falha ao carregar:', e.message);
+        showLoadError();
+      }
+    }
+
+    function renderFilters() {
+      const wrap = document.getElementById('filters');
+      wrap.innerHTML = allCategories.map((c, i) =>
+        `<button class="filter-btn${i === 0 ? ' active' : ''}" data-cat="${c.slug}" onclick="filterCat('${c.slug}')">${c.nome}</button>`
+      ).join('');
+      document.getElementById('subfilters').innerHTML = '';
+      document.getElementById('subfilters').style.display = 'none';
+    }
+
+    function filterCat(slug) {
+      if (slug === currentFilter) return;
+      loadCategoryProducts(slug);
     }
 
     function filterSub(sub) {
@@ -2720,7 +2665,17 @@
       document.getElementById('pmPrice').innerHTML = semEstoque
         ? '<span style="color:var(--text-faint);">Esgotado</span>'
         : fmt(price) + (prod.preco_pix && prod.preco_pix < prod.preco ? '<small>NO PIX</small>' : '');
-      document.getElementById('pmDesc').textContent = prod.descricao || '';
+      const pmDescEl = document.getElementById('pmDesc');
+      pmDescEl.textContent = prod.descricao || '';
+      if (!prod.descricao) {
+        sb.from('produtos').select('descricao').eq('id', id).single()
+          .then(({ data }) => {
+            if (data && data.descricao) {
+              prod.descricao = data.descricao;
+              pmDescEl.textContent = data.descricao;
+            }
+          });
+      }
 
       let actionsHtml = '';
       if (semEstoque) {
@@ -3936,6 +3891,7 @@
     window.buscarCep = buscarCep;
     window.filterCat = filterCat;
     window.filterSub = filterSub;
+    window.loadCategoryProducts = loadCategoryProducts;
     window.addToCart = addToCart;
     window.changeQty = changeQty;
     window.removeFromCart = removeFromCart;
@@ -3947,8 +3903,8 @@
     window.submitOrder = submitOrder;
     window.closeSuccess = closeSuccess;
     window.filterSearch = filterSearch;
+    window.loadData = loadData;
     // abrirVariacoes está declarada em outro script abaixo (já no escopo global)
-    window.fecharVariacoes = fecharVariacoes;
     window.renderProducts = renderProducts;
     window.renderCart = renderCart;
     window.updateCartCount = updateCartCount;
