@@ -38,7 +38,7 @@ async function fetchProducts(
 
   if (produtosError) throw new Error(produtosError.message);
 
-  const produtos = (produtosRaw ?? []) as Omit<Produto, '_variacoes'>[];
+  const produtos = (produtosRaw ?? []) as unknown as Omit<Produto, '_variacoes'>[];
 
   const produtosComVariacoes = produtos.map((p) => ({
     ...p,
