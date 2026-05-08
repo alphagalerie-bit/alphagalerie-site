@@ -10,7 +10,10 @@ const Footer: FC = () => {
     <footer className={styles.footer}>
       <div className={styles.grid}>
         <div>
-          <p className={styles.brandName}>alpha.galerie</p>
+          <a href="/" className={styles.brandName} aria-label="Alpha Galerie — página inicial">
+            <span className={styles.brandMark} aria-hidden="true" />
+            <span>alpha.galerie</span>
+          </a>
           <p className={styles.brandDesc}>
             Curadoria de produtos exclusivos com identidade única. Arte,
             moda e lifestyle em um só lugar.

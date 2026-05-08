@@ -22,11 +22,36 @@
 
 .brandName {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 1.5rem;
-  font-weight: 500;
-  letter-spacing: 0.05em;
-  color: #f4f4f4;
+  font-size: 18px;
+  letter-spacing: 0.04em;
+  color: var(--gold);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
   margin: 0 0 1rem;
+}
+
+.brandMark {
+  width: 32px;
+  height: 32px;
+  border: 1.5px solid var(--gold);
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.brandMark::after {
+  content: 'ag';
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-weight: 500;
+  font-size: 18px;
+  color: var(--gold);
+  line-height: 1;
+  letter-spacing: -0.02em;
 }
 
 .brandDesc {
@@ -137,6 +162,20 @@
 
   .footer {
     padding: 56px 16px 24px;
+  }
+
+  .brandName {
+    font-size: 16px;
+    gap: 8px;
+  }
+
+  .brandMark {
+    width: 28px;
+    height: 28px;
+  }
+
+  .brandMark::after {
+    font-size: 16px;
   }
 
   .copyright {
