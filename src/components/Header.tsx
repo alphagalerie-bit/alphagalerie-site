@@ -47,7 +47,6 @@ const Header: FC<HeaderProps> = ({ onOpenCart }) => {
                 href="https://alphahempbrasil.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className={styles.hempLink}
               >
                 Hemp Brasil
               </a>

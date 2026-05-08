@@ -1,4 +1,3 @@
-// src/components/CartDrawer.tsx
 import { useEffect, useRef } from 'react';
 import { useCartStore } from '../store/cart';
 import { formatCurrency } from '../lib/format';
@@ -22,7 +21,6 @@ export default function CartDrawer({ isOpen, onClose, onOpenCheckout }: CartDraw
   const selectTotal = useCartStore((s) => s.selectTotal);
 
   const total = selectTotal();
-  const itemCount = items.reduce((acc, i) => acc + i.qtd, 0);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -35,7 +33,7 @@ export default function CartDrawer({ isOpen, onClose, onOpenCheckout }: CartDraw
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key === 'Escape') { onClose(); return; }
       if (e.key === 'Tab') {
-        if (focusables.length === 0) { e.preventDefault(); return; }
+        if (!focusables.length) { e.preventDefault(); return; }
         const first = focusables[0];
         const last = focusables[focusables.length - 1];
         if (e.shiftKey) {
@@ -54,136 +52,137 @@ export default function CartDrawer({ isOpen, onClose, onOpenCheckout }: CartDraw
     };
   }, [isOpen, onClose]);
 
-  if (!isOpen) return null;
-
-  const fmt = formatCurrency;
-
   return (
     <>
       {/* Overlay */}
       <div
-        className={styles.overlay}
+        className={`${styles.overlay}${isOpen ? ` ${styles.open}` : ''}`}
         onPointerDown={onClose}
         aria-hidden="true"
       />
 
       {/* Drawer */}
-      <div
+      <aside
         ref={drawerRef}
+        id="cartDrawer"
         role="dialog"
         aria-modal="true"
         aria-label="Carrinho de compras"
-        className={styles.drawer}
+        className={`${styles.drawer}${isOpen ? ` ${styles.open}` : ''}`}
       >
         {/* Header */}
         <div className={styles.header}>
-          <span className={styles.title}>
-            Carrinho{itemCount > 0 ? ` (${itemCount})` : ''}
-          </span>
+          <h3 className={styles.title}>
+            Seu <em>carrinho</em>
+          </h3>
           <button
             type="button"
-            aria-label="Fechar carrinho"
+            aria-label="Fechar"
             onClick={onClose}
             className={styles.closeBtn}
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
+            ×
           </button>
         </div>
 
-        {/* Body */}
-        {items.length === 0 ? (
-          <div className={styles.empty}>
-            <span style={{ fontFamily: 'Inter, sans-serif' }}>Seu carrinho está vazio.</span>
-          </div>
-        ) : (
-          <ul className={styles.itemList} role="list" aria-label="Itens no carrinho">
-            {items.map((item) => (
-              <li key={item.cartKey} className={styles.item}>
+        {/* Items */}
+        <div className={styles.items} id="cartItems">
+          {items.length === 0 ? (
+            <div className={styles.empty}>
+              <p className={styles.emptyTitle}>Seu carrinho está vazio</p>
+              <span className={styles.emptyMono}>Adicione produtos para continuar</span>
+            </div>
+          ) : (
+            items.map((item) => (
+              <div key={item.cartKey} className={styles.item}>
                 {/* Imagem */}
-                {item.imagem ? (
-                  <img
-                    src={item.imagem}
-                    alt={item.nome}
-                    className={styles.itemImg}
-                    width={72}
-                    height={72}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                ) : (
-                  <div className={styles.itemImgPlaceholder} aria-hidden="true" />
-                )}
+                <div className={styles.itemImg}>
+                  {item.imagem ? (
+                    <img
+                      src={item.imagem}
+                      alt={item.nome}
+                      className={styles.itemImgEl}
+                      width={70}
+                      height={70}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  ) : (
+                    <svg className={styles.itemImgSvg} viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                      <rect x="20" y="30" width="60" height="50" rx="2" />
+                      <circle cx="35" cy="45" r="4" />
+                    </svg>
+                  )}
+                </div>
 
                 {/* Info */}
                 <div className={styles.itemInfo}>
-                  <span className={styles.itemNome} style={{ fontFamily: 'Inter, sans-serif' }}>
-                    {item.nome}
-                  </span>
-                  {item.variacao && (
-                    <span className={styles.itemVariacao} style={{ fontFamily: 'Inter, sans-serif' }}>
-                      {item.variacao}
-                    </span>
-                  )}
-                  <span className={styles.itemPreco} style={{ fontFamily: 'Inter, sans-serif' }}>
-                    {fmt(item.preco)}
-                  </span>
-                  {/* Qty controls */}
-                  <div className={styles.qtyRow}>
-                    <button
-                      type="button"
-                      aria-label={`Diminuir quantidade de ${item.nome}`}
-                      onClick={() => changeQty(item.cartKey, -1)}
-                      className={styles.qtyBtn}
-                    >
-                      −
-                    </button>
-                    <span className={styles.qtyValue} aria-live="polite" aria-label={`Quantidade: ${item.qtd}`}>
-                      {item.qtd}
-                    </span>
-                    <button
-                      type="button"
-                      aria-label={`Aumentar quantidade de ${item.nome}`}
-                      onClick={() => changeQty(item.cartKey, +1)}
-                      className={styles.qtyBtn}
-                    >
-                      +
-                    </button>
+                  <div>
+                    <div className={styles.itemCat}>
+                      {item.categoria}{item.marca ? ` · ${item.marca}` : ''}
+                    </div>
+                    <div className={styles.itemName}>
+                      {item.nome}
+                      {item.variacao && (
+                        <span className={styles.itemVariacao}>{item.variacao}</span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Bottom: qty | preço + remover */}
+                  <div className={styles.itemBottom}>
+                    <div className={styles.qtyControl}>
+                      <button
+                        type="button"
+                        className={styles.qtyBtn}
+                        aria-label={`Diminuir quantidade de ${item.nome}`}
+                        onClick={() => changeQty(item.cartKey, -1)}
+                      >
+                        −
+                      </button>
+                      <span className={styles.qtySpan} aria-live="polite">
+                        {item.qtd}
+                      </span>
+                      <button
+                        type="button"
+                        className={styles.qtyBtn}
+                        aria-label={`Aumentar quantidade de ${item.nome}`}
+                        onClick={() => changeQty(item.cartKey, +1)}
+                      >
+                        +
+                      </button>
+                    </div>
+
+                    <div className={styles.itemRight}>
+                      <span className={styles.itemPrice}>
+                        {formatCurrency(item.preco * item.qtd)}
+                      </span>
+                      <button
+                        type="button"
+                        className={styles.removeBtn}
+                        aria-label={`Remover ${item.nome} do carrinho`}
+                        onClick={() => removeItem(item.cartKey)}
+                      >
+                        REMOVER
+                      </button>
+                    </div>
                   </div>
                 </div>
-
-                {/* Remove */}
-                <button
-                  type="button"
-                  aria-label={`Remover ${item.nome} do carrinho`}
-                  onClick={() => removeItem(item.cartKey)}
-                  className={styles.removeBtn}
-                >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <polyline points="3 6 5 6 21 6" />
-                    <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
-                    <path d="M10 11v6" />
-                    <path d="M14 11v6" />
-                    <path d="M9 6V4h6v2" />
-                  </svg>
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
+              </div>
+            ))
+          )}
+        </div>
 
         {/* Footer */}
         {items.length > 0 && (
-          <div className={styles.footer}>
-            <div className={styles.totalsRow}>
-              <span style={{ fontFamily: 'Inter, sans-serif' }}>Subtotal</span>
-              <span style={{ fontFamily: 'Inter, sans-serif' }}>{fmt(total)}</span>
+          <div className={styles.footer} id="cartFooter">
+            <div className={styles.totalRow}>
+              <span>Subtotal</span>
+              <span>{formatCurrency(total)}</span>
             </div>
-            <div className={styles.totalsRowHighlight}>
-              <span style={{ fontFamily: 'Inter, sans-serif' }}>Total</span>
-              <span style={{ fontFamily: 'Inter, sans-serif', color: '#c9a961' }}>{fmt(total)}</span>
+            <div className={styles.totalFinal}>
+              <span className={styles.totalLabel}>Total</span>
+              <span className={styles.totalValue}>{formatCurrency(total)}</span>
             </div>
             <button
               type="button"
@@ -191,11 +190,11 @@ export default function CartDrawer({ isOpen, onClose, onOpenCheckout }: CartDraw
               onClick={() => { onClose(); onOpenCheckout(); }}
               disabled={items.length === 0}
             >
-              Finalizar Pedido
+              Finalizar pedido →
             </button>
           </div>
         )}
-      </div>
+      </aside>
     </>
   );
 }

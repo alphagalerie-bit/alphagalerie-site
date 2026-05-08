@@ -1,0 +1,482 @@
+/* ── Overlay ── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.92);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* ── Box ── */
+.box {
+  max-width: 480px;
+  width: 100%;
+  background: #111;
+  border: 1px solid #222;
+  min-height: 100svh;
+  max-height: 100svh;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── Header ── */
+.head {
+  flex-shrink: 0;
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid #1a1a1a;
+  background: #111;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.headText {
+  flex: 1;
+  min-width: 0;
+}
+
+.headTitle {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 24px;
+  font-weight: 500;
+  margin-bottom: 4px;
+  line-height: 1.1;
+  color: #f4f4f4;
+}
+
+.headTitle em {
+  color: #c9a961;
+  font-style: italic;
+}
+
+.headSub {
+  color: #888;
+  font-size: 12px;
+  margin: 0;
+}
+
+.closeBtn {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border: 1px solid #222;
+  background: transparent;
+  color: #888;
+  font-size: 20px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.closeBtn:hover {
+  border-color: #c9a961;
+  color: #c9a961;
+}
+
+/* ── Body ── */
+.body {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 20px 24px;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ── Form fields ── */
+.field {
+  margin-bottom: 14px;
+}
+
+.label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #c9a961;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.input,
+.textarea {
+  width: 100%;
+  background: #0a0a0a;
+  border: 1px solid #222;
+  color: #f4f4f4;
+  padding: 10px 14px;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.input:focus,
+.textarea:focus {
+  outline: none;
+  border-color: #c9a961;
+}
+
+.textarea {
+  min-height: 60px;
+  resize: vertical;
+}
+
+/* ── Payment / Delivery option cards ── */
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.optLabel {
+  cursor: pointer;
+}
+
+.optLabel input[type="radio"] {
+  display: none;
+}
+
+.optBox {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background: #0a0a0a;
+  border: 1px solid #222;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.optLabel input[type="radio"]:checked + .optBox {
+  border-color: #c9a961;
+  background: rgba(201, 169, 97, 0.08);
+}
+
+.optBox svg {
+  color: #c9a961;
+  flex-shrink: 0;
+}
+
+.optBoxText {
+  flex: 1;
+  min-width: 0;
+}
+
+.optBoxText strong {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #f4f4f4;
+}
+
+.optBoxText small {
+  display: block;
+  margin-top: 2px;
+  font-size: 12px;
+  color: #888;
+}
+
+.badgeGold {
+  background: #c9a961;
+  color: #000;
+  padding: 4px 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.badgeGreen {
+  background: #2a5a2a;
+  color: #6aba6a;
+  padding: 4px 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── Delivery address grid ── */
+.addressGrid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 12px;
+}
+
+/* ── Cupom ── */
+.cupomRow {
+  display: flex;
+  gap: 8px;
+}
+
+.cupomInput {
+  flex: 1;
+}
+
+.cupomBtn {
+  padding: 10px 16px;
+  background: #0a0a0a;
+  border: 1px solid #c9a961;
+  color: #c9a961;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s, color 0.2s;
+}
+
+.cupomBtn:hover {
+  background: #c9a961;
+  color: #000;
+}
+
+.cupomStatus {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  margin-top: 6px;
+  min-height: 14px;
+}
+
+.cupomOk { color: #4ade80; }
+.cupomErr { color: #ef4444; }
+
+/* ── Frete box ── */
+.freteBox {
+  background: #0a0a0a;
+  border: 1px solid #1a1a1a;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.freteLabel {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #888;
+}
+
+.freteValor {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  color: #c9a961;
+}
+
+/* ── Summary ── */
+.summary {
+  background: #0a0a0a;
+  padding: 20px;
+  margin: 24px 0;
+  border: 1px solid #1a1a1a;
+}
+
+.summaryTitle {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #888;
+  margin-bottom: 12px;
+}
+
+.summaryLine {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  padding: 6px 0;
+  color: #888;
+}
+
+.summaryLine strong {
+  color: #f4f4f4;
+  font-weight: 500;
+}
+
+.summaryLineGold {
+  color: #c9a961;
+}
+
+.summaryLineGreen {
+  color: #4ade80;
+}
+
+.summaryTotal {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-top: 12px;
+  margin-top: 12px;
+  border-top: 1px solid #1a1a1a;
+}
+
+.summaryTotalLabel {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #f4f4f4;
+}
+
+.summaryTotalValue {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px;
+  font-weight: 500;
+  color: #c9a961;
+}
+
+/* ── Error ── */
+.error {
+  color: #ef4444;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+/* ── Footer ── */
+.foot {
+  flex-shrink: 0;
+  padding: 14px 20px;
+  padding-bottom: max(18px, env(safe-area-inset-bottom));
+  border-top: 1px solid #1a1a1a;
+  background: #111;
+}
+
+.footTotal {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 12px;
+}
+
+.footTotalLabel {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #888;
+}
+
+.footTotalValue {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px;
+  font-weight: 500;
+  color: #c9a961;
+}
+
+.footActions {
+  display: flex;
+  gap: 10px;
+}
+
+.btnGhost {
+  padding: 16px 22px;
+  min-height: 52px;
+  background: transparent;
+  border: 1px solid #222;
+  color: #888;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+  flex-shrink: 0;
+}
+
+.btnGhost:hover {
+  border-color: #f4f4f4;
+  color: #f4f4f4;
+}
+
+.btnGold {
+  flex: 1;
+  padding: 16px 18px;
+  min-height: 52px;
+  background: #c9a961;
+  border: none;
+  color: #000;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btnGold:hover {
+  background: #f4f4f4;
+}
+
+.btnGold:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+/* ── Success step ── */
+.success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 32px;
+  text-align: center;
+  flex: 1;
+}
+
+.successCheck {
+  font-size: 48px;
+  color: #4caf50;
+  margin-bottom: 24px;
+  line-height: 1;
+}
+
+.successTitle {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px;
+  color: #c9a961;
+  margin-bottom: 8px;
+}
+
+.successId {
+  color: #888;
+  margin-bottom: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+}
+
+.successMsg {
+  color: #888;
+  margin-bottom: 32px;
+  line-height: 1.7;
+}
+
+/* ── Mobile ── */
+@media (max-width: 640px) {
+  .head { padding: 16px 18px 14px; }
+  .headTitle { font-size: 22px; }
+  .body { padding: 16px 18px 24px; }
+  .foot { padding: 12px 16px; padding-bottom: max(16px, env(safe-area-inset-bottom)); }
+  .footTotalValue { font-size: 26px; }
+  .btnGold { padding: 14px 16px; min-height: 50px; font-size: 11px; }
+  .btnGhost { padding: 14px 18px; }
+  .optBox { padding: 12px 12px; gap: 10px; }
+  .optBoxText small { font-size: 11px; line-height: 1.4; }
+}

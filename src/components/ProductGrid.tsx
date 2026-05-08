@@ -100,27 +100,26 @@ export default function ProductGrid({
   }
 
   const btnBase: React.CSSProperties = {
-    padding: '0.5rem 1.25rem',
-    fontFamily: 'Inter, sans-serif',
-    fontSize: '0.7rem',
-    fontWeight: 600,
-    letterSpacing: '0.12em',
+    padding: '12px 22px',
+    fontFamily: "'JetBrains Mono', monospace",
+    fontSize: 11,
+    letterSpacing: '0.15em',
     textTransform: 'uppercase',
     cursor: 'pointer',
-    borderRadius: 2,
-    transition: 'border-color 0.15s, color 0.15s, background 0.15s',
+    borderRadius: 999,
+    transition: 'all 0.2s',
   };
 
   return (
     <section
       id="produtos"
-      style={{ padding: '3rem 1.5rem', maxWidth: 1320, margin: '0 auto' }}
+      style={{ padding: '48px 24px 60px', maxWidth: 1320, margin: '0 auto' }}
       aria-label="Produtos"
     >
       {/* Filtro de categorias */}
       <div
         className="filter-scroll"
-        style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1.5rem', overflowX: 'auto', WebkitOverflowScrolling: 'touch' as React.CSSProperties['WebkitOverflowScrolling'], scrollbarWidth: 'none' as React.CSSProperties['scrollbarWidth'], paddingBottom: '4px' }}
+        style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 48, paddingBottom: 32, borderBottom: '1px solid #1a1a1a', overflowX: 'auto', WebkitOverflowScrolling: 'touch' as React.CSSProperties['WebkitOverflowScrolling'], scrollbarWidth: 'none' as React.CSSProperties['scrollbarWidth'] }}
         role="group"
         aria-label="Filtrar por categoria"
       >
@@ -129,12 +128,12 @@ export default function ProductGrid({
           onClick={() => { onCategoryChange(null); setActiveSubcat(null); }}
           style={{
             ...btnBase,
-            border: `1px solid ${categoryId === null ? '#c9a961' : 'rgba(244,244,244,0.15)'}`,
-            background: categoryId === null ? 'rgba(201,169,97,0.1)' : 'transparent',
-            color: categoryId === null ? '#c9a961' : 'rgba(244,244,244,0.6)',
+            border: `1px solid ${categoryId === null ? '#c9a961' : '#222'}`,
+            background: categoryId === null ? '#c9a961' : 'transparent',
+            color: categoryId === null ? '#000' : '#888',
           }}
         >
-          TODOS
+          Todos
         </button>
         {categorias.map((cat) => (
           <button
@@ -143,12 +142,12 @@ export default function ProductGrid({
             onClick={() => { onCategoryChange(cat.id); setActiveSubcat(null); }}
             style={{
               ...btnBase,
-              border: `1px solid ${categoryId === cat.id ? '#c9a961' : 'rgba(244,244,244,0.15)'}`,
-              background: categoryId === cat.id ? 'rgba(201,169,97,0.1)' : 'transparent',
-              color: categoryId === cat.id ? '#c9a961' : 'rgba(244,244,244,0.6)',
+              border: `1px solid ${categoryId === cat.id ? '#c9a961' : '#222'}`,
+              background: categoryId === cat.id ? '#c9a961' : 'transparent',
+              color: categoryId === cat.id ? '#000' : '#888',
             }}
           >
-            {cat.nome.toUpperCase()}
+            {cat.nome}
           </button>
         ))}
       </div>
@@ -157,7 +156,7 @@ export default function ProductGrid({
       {subcategorias.length > 0 && (
         <div
           className="filter-scroll"
-          style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1.25rem', overflowX: 'auto', WebkitOverflowScrolling: 'touch' as React.CSSProperties['WebkitOverflowScrolling'], scrollbarWidth: 'none' as React.CSSProperties['scrollbarWidth'], paddingBottom: '4px' }}
+          style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 24, overflowX: 'auto', WebkitOverflowScrolling: 'touch' as React.CSSProperties['WebkitOverflowScrolling'], scrollbarWidth: 'none' as React.CSSProperties['scrollbarWidth'] }}
           role="group"
           aria-label="Filtrar por subcategoria"
         >
@@ -166,12 +165,10 @@ export default function ProductGrid({
             onClick={() => setActiveSubcat(null)}
             style={{
               ...btnBase,
-              padding: '0.35rem 0.875rem',
-              fontSize: '0.65rem',
-              fontWeight: 500,
-              border: `1px solid ${activeSubcat === null ? 'rgba(201,169,97,0.5)' : 'rgba(244,244,244,0.1)'}`,
-              background: 'transparent',
-              color: activeSubcat === null ? '#c9a961' : 'rgba(244,244,244,0.45)',
+              padding: '8px 16px',
+              border: `1px solid ${activeSubcat === null ? '#c9a961' : '#222'}`,
+              background: activeSubcat === null ? '#c9a961' : 'transparent',
+              color: activeSubcat === null ? '#000' : '#888',
             }}
           >
             Todas
@@ -183,12 +180,10 @@ export default function ProductGrid({
               onClick={() => setActiveSubcat(s)}
               style={{
                 ...btnBase,
-                padding: '0.35rem 0.875rem',
-                fontSize: '0.65rem',
-                fontWeight: 500,
-                border: `1px solid ${activeSubcat === s ? 'rgba(201,169,97,0.5)' : 'rgba(244,244,244,0.1)'}`,
-                background: 'transparent',
-                color: activeSubcat === s ? '#c9a961' : 'rgba(244,244,244,0.45)',
+                padding: '8px 16px',
+                border: `1px solid ${activeSubcat === s ? '#c9a961' : '#222'}`,
+                background: activeSubcat === s ? '#c9a961' : 'transparent',
+                color: activeSubcat === s ? '#000' : '#888',
               }}
             >
               {s}
@@ -198,9 +193,9 @@ export default function ProductGrid({
       )}
 
       {/* Campo de busca (server-side, debounced) */}
-      <div style={{ position: 'relative', marginBottom: '2rem', maxWidth: 400 }}>
+      <div style={{ position: 'relative', marginBottom: 32, maxWidth: 400 }}>
         <svg
-          style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)', color: 'rgba(244,244,244,0.35)', pointerEvents: 'none' }}
+          style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: '#555', pointerEvents: 'none' }}
           width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"
         >
           <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
@@ -216,13 +211,13 @@ export default function ProductGrid({
           onChange={handleSearchChange}
           style={{
             width: '100%',
-            padding: '0.625rem 0.75rem 0.625rem 2.5rem',
+            padding: '12px 16px 12px 42px',
             background: '#111',
-            border: '1px solid rgba(244,244,244,0.1)',
+            border: '1px solid #222',
             color: '#f4f4f4',
             fontFamily: 'Inter, sans-serif',
-            fontSize: '0.875rem',
-            borderRadius: 2,
+            fontSize: 14,
+            borderRadius: 0,
             outline: 'none',
           }}
         />
@@ -239,22 +234,23 @@ export default function ProductGrid({
       {/* Grid */}
       {isLoading ? (
         <div
-          style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px,1fr))', gap: '1.5rem' }}
+          style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 12 }}
           aria-busy="true"
           aria-label="Carregando produtos"
         >
           {Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)}
         </div>
       ) : filtered.length === 0 ? (
-        <div role="status" style={{ textAlign: 'center', padding: '4rem 0', color: 'rgba(244,244,244,0.4)', fontFamily: 'Inter, sans-serif' }}>
+        <div role="status" style={{ gridColumn: '1/-1', textAlign: 'center', padding: '80px 24px', color: '#888', fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontSize: 22 }}>
           Nenhum produto encontrado.
         </div>
       ) : (
         <div
+          className="products-grid-responsive"
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(260px,1fr))',
-            gap: '1.5rem',
+            gridTemplateColumns: 'repeat(2,1fr)',
+            gap: 12,
             opacity: isFetching ? 0.7 : 1,
             transition: 'opacity 0.15s',
           }}

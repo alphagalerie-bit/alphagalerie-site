@@ -1,12 +1,41 @@
-import { useEffect, useRef, useState } from 'react';
+import { Component, useEffect, useRef, useState } from 'react';
+import type { ReactNode } from 'react';
 import { useCartStore } from '../../store/cart';
 import { useCheckout } from '../../hooks/useCheckout';
 import { loadMercadoPago } from '../../lib/mercadopago';
-import PixPayment from './PixPayment';
-import CardPayment from './CardPayment';
-import type { Pedido } from '../../types';
 import { calcularFrete } from '../../lib/frete';
 import type { FreteResult } from '../../lib/frete';
+import type { Pedido } from '../../types';
+import PixPayment from './PixPayment';
+import CardPayment from './CardPayment';
+import styles from './CheckoutModal.module.css';
+
+class CardErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean }> {
+  constructor(props: { children: ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() { return { hasError: true }; }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ padding: '24px', color: '#888', fontFamily: "'JetBrains Mono', monospace", fontSize: 11, letterSpacing: '0.1em' }}>
+          Erro ao carregar formulário de cartão. Tente fechar e abrir novamente, ou escolha PIX.
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function CardPaymentSafe(props: { amount: number; mp: any; onTokenReceived: () => void }) {
+  return (
+    <CardErrorBoundary>
+      <CardPayment amount={props.amount} mp={props.mp} onTokenReceived={props.onTokenReceived} />
+    </CardErrorBoundary>
+  );
+}
 
 interface CheckoutModalProps {
   onClose: () => void;
@@ -32,6 +61,9 @@ function maskTelefone(value: string): string {
   return digits.replace(/^(\d{2})(\d)/, '($1) $2').replace(/(\d{5})(\d)/, '$1-$2');
 }
 
+const fmt = (v: number) =>
+  new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
+
 export default function CheckoutModal({ onClose }: CheckoutModalProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
   const items = useCartStore((s) => s.items);
@@ -48,12 +80,12 @@ export default function CheckoutModal({ onClose }: CheckoutModalProps) {
   const [telefone, setTelefone] = useState('');
   const [email, setEmail] = useState('');
   const [entrega, setEntrega] = useState<'retirada' | 'delivery'>('retirada');
+  const [cep, setCep] = useState('');
   const [endereco, setEndereco] = useState('');
+  const [numero, setNumero] = useState('');
+  const [complemento, setComplemento] = useState('');
   const [bairro, setBairro] = useState('');
   const [cidade, setCidade] = useState('');
-  const [estado, setEstado] = useState('');
-  const [cep, setCep] = useState('');
-  const [complemento, setComplemento] = useState('');
   const [pagamento, setPagamento] = useState<'pix' | 'cartao' | 'pagar_retirada'>('pix');
   const [observacoes, setObservacoes] = useState('');
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -63,23 +95,19 @@ export default function CheckoutModal({ onClose }: CheckoutModalProps) {
   const [cupomAtivo, setCupomAtivo] = useState<(typeof CUPONS)[string] & { codigo: string } | null>(null);
   const [cupomStatus, setCupomStatus] = useState<{ ok: boolean; msg: string } | null>(null);
   const [frete, setFrete] = useState<FreteResult>({ valor: 0, label: '' });
+  const [cepStatus, setCepStatus] = useState<{ ok: boolean; msg: string } | null>(null);
+  const [cepLoading, setCepLoading] = useState(false);
+  const numeroRef = useRef<HTMLInputElement>(null);
 
   const subtotal = items.reduce((acc, i) => acc + i.preco * i.qtd, 0);
-
   const descontoPix = pagamento === 'pix' ? subtotal * 0.05 : 0;
-
-  const freteValor = (() => {
-    if (!cupomAtivo || cupomAtivo.tipo !== 'frete') return frete.valor;
-    return 0;
-  })();
-
+  const freteValor = cupomAtivo?.tipo === 'frete' ? 0 : frete.valor;
   const descontoCupom = (() => {
     if (!cupomAtivo) return 0;
     if (cupomAtivo.tipo === 'pct') return (subtotal - descontoPix) * (cupomAtivo.valor / 100);
     if (cupomAtivo.tipo === 'fixo') return Math.min(cupomAtivo.valor, subtotal - descontoPix);
     return 0;
   })();
-
   const total = Math.max(0, subtotal - descontoPix - descontoCupom + freteValor);
 
   useEffect(() => {
@@ -91,7 +119,7 @@ export default function CheckoutModal({ onClose }: CheckoutModalProps) {
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key === 'Escape') { onClose(); return; }
       if (e.key === 'Tab') {
-        if (focusables.length === 0) { e.preventDefault(); return; }
+        if (!focusables.length) { e.preventDefault(); return; }
         const first = focusables[0];
         const last = focusables[focusables.length - 1];
         if (e.shiftKey) {
@@ -110,7 +138,6 @@ export default function CheckoutModal({ onClose }: CheckoutModalProps) {
     };
   }, [onClose]);
 
-  // Auto-fill coupon from popup sessionStorage
   useEffect(() => {
     const auto = sessionStorage.getItem('ag_cupom_auto');
     if (auto) {
@@ -125,18 +152,43 @@ export default function CheckoutModal({ onClose }: CheckoutModalProps) {
     }
   }, []);
 
-  // Recalculate frete whenever entrega type or CEP changes
   useEffect(() => {
     setFrete(calcularFrete(entrega, cep));
   }, [entrega, cep]);
 
+  function handleCepChange(e: React.ChangeEvent<HTMLInputElement>) {
+    let v = e.target.value.replace(/\D/g, '').slice(0, 8);
+    if (v.length > 5) v = v.slice(0, 5) + '-' + v.slice(5);
+    setCep(v);
+    const digits = v.replace(/\D/g, '');
+    if (digits.length === 8) buscarCep(digits);
+  }
+
+  async function buscarCep(digits: string) {
+    setCepStatus({ ok: false, msg: 'Buscando...' });
+    setCepLoading(true);
+    try {
+      const resp = await fetch(`https://viacep.com.br/ws/${digits}/json/`);
+      const data = await resp.json();
+      if (data.erro) {
+        setCepStatus({ ok: false, msg: 'CEP não encontrado. Preencha manualmente.' });
+        return;
+      }
+      if (data.logradouro) setEndereco(data.logradouro);
+      if (data.bairro) setBairro(data.bairro);
+      if (data.localidade) setCidade(data.localidade);
+      setCepStatus({ ok: true, msg: '✓ Endereço encontrado' });
+      setTimeout(() => numeroRef.current?.focus(), 50);
+    } catch {
+      setCepStatus({ ok: false, msg: 'Erro ao buscar CEP. Preencha manualmente.' });
+    } finally {
+      setCepLoading(false);
+    }
+  }
+
   function handleAplicarCupom() {
     const codigo = cupomInput.trim().toUpperCase();
-    if (!codigo) {
-      setCupomAtivo(null);
-      setCupomStatus(null);
-      return;
-    }
+    if (!codigo) { setCupomAtivo(null); setCupomStatus(null); return; }
     const cupom = CUPONS[codigo];
     if (!cupom) {
       setCupomAtivo(null);
@@ -152,20 +204,19 @@ export default function CheckoutModal({ onClose }: CheckoutModalProps) {
     setSubmitError(null);
     setIsSubmitting(true);
 
+    const enderecoCompleto = [endereco, numero, complemento].filter(Boolean).join(', ');
+
     const dadosPedido: Pedido = {
       nome, telefone,
       email: email || undefined,
       cep: cep || undefined,
-      endereco: endereco || undefined,
+      endereco: enderecoCompleto || undefined,
       bairro: bairro || undefined,
       cidade: cidade || undefined,
-      estado: estado || undefined,
       complemento: complemento || undefined,
       pagamento, entrega,
       observacoes: observacoes || undefined,
-      total,
-      status: 'pendente',
-      itens: items,
+      total, status: 'pendente', itens: items,
     };
 
     const result = await submitPedido(dadosPedido, items);
@@ -177,8 +228,7 @@ export default function CheckoutModal({ onClose }: CheckoutModalProps) {
     }
 
     setPedidoId(result.pedido?.id ?? null);
-    const newTxid = `AG${Date.now()}`;
-    setTxid(newTxid);
+    setTxid(`AG${Date.now()}`);
 
     if (pagamento === 'pix') {
       setStep('pix');
@@ -196,256 +246,273 @@ export default function CheckoutModal({ onClose }: CheckoutModalProps) {
     }
   }
 
-  function handlePixClose() {
-    clearCart();
-    setStep('success');
-  }
-
-  function handleTokenReceived(_token: string, _paymentMethodId: string) {
-    clearCart();
-    setStep('success');
-  }
-
-  const fmt = (v: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
-
-  const modalStyle: React.CSSProperties = {
-    position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
-    background: '#0a0a0a', border: '1px solid rgba(201,169,97,0.3)', borderRadius: 4,
-    width: '90%', maxWidth: 560, maxHeight: '90vh', overflowY: 'auto', zIndex: 301,
-  };
-
-  const fieldStyle: React.CSSProperties = {
-    display: 'flex', flexDirection: 'column', gap: '0.35rem', marginBottom: '0.75rem',
-  };
-
-  const inputStyle: React.CSSProperties = {
-    padding: '0.625rem 0.875rem', background: '#111', border: '1px solid rgba(244,244,244,0.15)',
-    borderRadius: 2, color: '#f4f4f4', fontSize: '0.875rem',
-  };
-
-  const labelStyle: React.CSSProperties = {
-    fontSize: '0.75rem', color: 'rgba(244,244,244,0.6)', fontWeight: 500,
-  };
-
   return (
-    <>
-      <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 300 }} onPointerDown={onClose} aria-hidden="true" />
-      <div ref={dialogRef} role="dialog" aria-modal="true" aria-label="Finalizar compra" style={modalStyle}>
-        <button
-          type="button"
-          onClick={onClose}
-          aria-label="Fechar"
-          style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'none', border: 'none', cursor: 'pointer', color: '#f4f4f4', display: 'flex', zIndex: 1 }}
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
-          </svg>
-        </button>
+    <div className={styles.overlay}>
+      <div ref={dialogRef} className={styles.box} role="dialog" aria-modal="true" aria-label="Finalizar pedido">
 
+        {/* ── Header ── */}
+        <div className={styles.head}>
+          <div className={styles.headText}>
+            <h3 className={styles.headTitle}>Finalizar <em>pedido</em></h3>
+            <p className={styles.headSub}>Preencha seus dados para finalizar o pedido.</p>
+          </div>
+          <button type="button" className={styles.closeBtn} onClick={onClose} aria-label="Fechar">×</button>
+        </div>
+
+        {/* ── Body ── */}
         {step === 'form' && (
-          <div style={{ padding: '1.5rem' }}>
-            <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.5rem', color: '#c9a961', marginBottom: '0.35rem' }}>
-              Finalizar Compra
-            </h2>
-            <p style={{ color: 'rgba(244,244,244,0.5)', fontSize: '0.875rem', marginBottom: '1.25rem' }}>
-              Total: <strong style={{ color: '#f4f4f4' }}>{fmt(total)}</strong>
-            </p>
+          <>
+            <div className={styles.body}>
+              <form id="checkoutForm" onSubmit={handleSubmit} noValidate>
 
-            <form onSubmit={handleSubmit} noValidate>
-              <fieldset style={{ border: '1px solid rgba(244,244,244,0.1)', borderRadius: 2, padding: '0.875rem', marginBottom: '1rem' }}>
-                <legend style={{ fontSize: '0.7rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#c9a961', padding: '0 0.35rem' }}>Seus dados</legend>
-                <div style={fieldStyle}>
-                  <label htmlFor="co_nome" style={labelStyle}>Nome completo *</label>
-                  <input id="co_nome" type="text" required value={nome} onChange={(e) => setNome(e.target.value)} autoComplete="name" style={inputStyle} />
+                {/* Dados pessoais */}
+                <div className={styles.field}>
+                  <label className={styles.label} htmlFor="co_nome">Nome completo *</label>
+                  <input id="co_nome" type="text" required className={styles.input} value={nome} onChange={(e) => setNome(e.target.value)} autoComplete="name" placeholder="Seu nome" />
                 </div>
-                <div style={fieldStyle}>
-                  <label htmlFor="co_telefone" style={labelStyle}>Telefone / WhatsApp *</label>
-                  <input id="co_telefone" type="tel" required value={telefone} onChange={(e) => setTelefone(maskTelefone(e.target.value))} autoComplete="tel" placeholder="(11) 99999-9999" style={inputStyle} />
+                <div className={styles.field}>
+                  <label className={styles.label} htmlFor="co_whats">WhatsApp *</label>
+                  <input id="co_whats" type="tel" required className={styles.input} value={telefone} onChange={(e) => setTelefone(maskTelefone(e.target.value))} placeholder="(11) 99999-9999" autoComplete="tel" />
                 </div>
-                <div style={fieldStyle}>
-                  <label htmlFor="co_email" style={labelStyle}>E-mail</label>
-                  <input id="co_email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" style={inputStyle} />
+                <div className={styles.field}>
+                  <label className={styles.label} htmlFor="co_email">E-mail</label>
+                  <input id="co_email" type="email" className={styles.input} value={email} onChange={(e) => setEmail(e.target.value)} placeholder="seu@email.com" autoComplete="email" />
                 </div>
-              </fieldset>
 
-              <fieldset style={{ border: '1px solid rgba(244,244,244,0.1)', borderRadius: 2, padding: '0.875rem', marginBottom: '1rem' }}>
-                <legend style={{ fontSize: '0.7rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#c9a961', padding: '0 0.35rem' }}>Entrega</legend>
-                <div style={{ display: 'flex', gap: '1rem', marginBottom: '0.75rem' }} role="radiogroup" aria-label="Tipo de entrega">
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', color: '#f4f4f4', fontSize: '0.875rem' }}>
-                    <input type="radio" name="entrega" value="retirada" checked={entrega === 'retirada'} onChange={() => setEntrega('retirada')} />
-                    Retirada
-                  </label>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', color: '#f4f4f4', fontSize: '0.875rem' }}>
-                    <input type="radio" name="entrega" value="delivery" checked={entrega === 'delivery'} onChange={() => setEntrega('delivery')} />
-                    Delivery
-                  </label>
+                {/* Entrega */}
+                <div className={styles.field}>
+                  <label className={styles.label}>Como quer receber? *</label>
+                  <div className={styles.options}>
+                    <label className={styles.optLabel}>
+                      <input type="radio" name="tipoEntrega" value="delivery" required checked={entrega === 'delivery'} onChange={() => setEntrega('delivery')} />
+                      <span className={styles.optBox}>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                          <path d="M1 3h15v13H1zM16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
+                        </svg>
+                        <span className={styles.optBoxText}>
+                          <strong>Entrega</strong>
+                          <small>Motoboy — frete calculado pelo CEP</small>
+                        </span>
+                      </span>
+                    </label>
+                    <label className={styles.optLabel}>
+                      <input type="radio" name="tipoEntrega" value="retirada" checked={entrega === 'retirada'} onChange={() => { setEntrega('retirada'); setCepStatus(null); }} />
+                      <span className={styles.optBox}>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                          <path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0116 0z"/><circle cx="12" cy="10" r="3"/>
+                        </svg>
+                        <span className={styles.optBoxText}>
+                          <strong>Retirada no local</strong>
+                          <small>Alpha Galerie · Alphaville · Frete grátis</small>
+                        </span>
+                        <span className={styles.badgeGreen}>GRÁTIS</span>
+                      </span>
+                    </label>
+                  </div>
                 </div>
+
+                {/* Campos de endereço (delivery) */}
                 {entrega === 'delivery' && (
                   <>
-                    <div style={fieldStyle}>
-                      <label htmlFor="co_cep" style={labelStyle}>CEP</label>
-                      <input id="co_cep" type="text" value={cep} onChange={(e) => setCep(e.target.value)} placeholder="00000-000" autoComplete="postal-code" style={{ ...inputStyle, maxWidth: 160 }} />
+                    <div className={styles.field}>
+                      <label className={styles.label} htmlFor="co_cep">CEP *</label>
+                      <input id="co_cep" type="text" className={styles.input} value={cep} onChange={handleCepChange} placeholder="00000-000" maxLength={9} autoComplete="postal-code" style={{ maxWidth: 180 }} />
+                      {cepStatus && (
+                        <span className={`${styles.cupomStatus} ${cepStatus.ok ? styles.cupomOk : styles.cupomErr}`}>
+                          {cepStatus.msg}
+                        </span>
+                      )}
                     </div>
-                    <div style={fieldStyle}>
-                      <label htmlFor="co_endereco" style={labelStyle}>Endereço *</label>
-                      <input id="co_endereco" type="text" required={entrega === 'delivery'} value={endereco} onChange={(e) => setEndereco(e.target.value)} autoComplete="street-address" style={inputStyle} />
-                    </div>
-                    <div style={fieldStyle}>
-                      <label htmlFor="co_bairro" style={labelStyle}>Bairro</label>
-                      <input id="co_bairro" type="text" value={bairro} onChange={(e) => setBairro(e.target.value)} style={inputStyle} />
-                    </div>
-                    <div style={{ display: 'flex', gap: '0.75rem' }}>
-                      <div style={{ ...fieldStyle, flex: 1 }}>
-                        <label htmlFor="co_cidade" style={labelStyle}>Cidade</label>
-                        <input id="co_cidade" type="text" value={cidade} onChange={(e) => setCidade(e.target.value)} autoComplete="address-level2" style={inputStyle} />
+                    {frete.valor > 0 && (
+                      <div className={styles.freteBox}>
+                        <span className={styles.freteLabel}>{frete.label || 'Frete'}</span>
+                        <span className={styles.freteValor}>{fmt(cupomAtivo?.tipo === 'frete' ? 0 : frete.valor)}</span>
                       </div>
-                      <div style={fieldStyle}>
-                        <label htmlFor="co_estado" style={labelStyle}>UF</label>
-                        <input id="co_estado" type="text" maxLength={2} value={estado} onChange={(e) => setEstado(e.target.value.toUpperCase())} autoComplete="address-level1" style={{ ...inputStyle, width: 64 }} />
+                    )}
+                    <div className={styles.field}>
+                      <label className={styles.label} htmlFor="co_rua">Rua / Avenida</label>
+                      <input id="co_rua" type="text" className={styles.input} value={endereco} onChange={(e) => setEndereco(e.target.value)} placeholder="Nome da rua ou avenida" required={entrega === 'delivery'} autoComplete="street-address" disabled={cepLoading} style={{ opacity: cepLoading ? 0.5 : 1 }} />
+                    </div>
+                    <div className={`${styles.field} ${styles.addressGrid}`}>
+                      <div>
+                        <label className={styles.label} htmlFor="co_numero">Número</label>
+                        <input ref={numeroRef} id="co_numero" type="text" className={styles.input} value={numero} onChange={(e) => setNumero(e.target.value)} placeholder="123" />
+                      </div>
+                      <div>
+                        <label className={styles.label} htmlFor="co_comp">Complemento</label>
+                        <input id="co_comp" type="text" className={styles.input} value={complemento} onChange={(e) => setComplemento(e.target.value)} placeholder="Apto, Bloco, Casa..." />
                       </div>
                     </div>
-                    <div style={fieldStyle}>
-                      <label htmlFor="co_complemento" style={labelStyle}>Complemento</label>
-                      <input id="co_complemento" type="text" value={complemento} onChange={(e) => setComplemento(e.target.value)} style={inputStyle} />
+                    <div className={styles.field}>
+                      <label className={styles.label} htmlFor="co_bairro">Bairro</label>
+                      <input id="co_bairro" type="text" className={styles.input} value={bairro} onChange={(e) => setBairro(e.target.value)} placeholder="Bairro" disabled={cepLoading} style={{ opacity: cepLoading ? 0.5 : 1 }} />
+                    </div>
+                    <div className={styles.field}>
+                      <label className={styles.label} htmlFor="co_cidade">Cidade</label>
+                      <input id="co_cidade" type="text" className={styles.input} value={cidade} onChange={(e) => setCidade(e.target.value)} placeholder="Cidade" autoComplete="address-level2" disabled={cepLoading} style={{ opacity: cepLoading ? 0.5 : 1 }} />
                     </div>
                   </>
                 )}
-              </fieldset>
 
-              <fieldset style={{ border: '1px solid rgba(244,244,244,0.1)', borderRadius: 2, padding: '0.875rem', marginBottom: '1rem' }}>
-                <legend style={{ fontSize: '0.7rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#c9a961', padding: '0 0.35rem' }}>Pagamento</legend>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }} role="radiogroup" aria-label="Forma de pagamento">
-                  {(['pix', 'cartao', 'pagar_retirada'] as const).map((p) => (
-                    <label key={p} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', color: '#f4f4f4', fontSize: '0.875rem' }}>
-                      <input type="radio" name="pagamento" value={p} checked={pagamento === p} onChange={() => setPagamento(p)} />
-                      {p === 'pix' ? 'PIX' : p === 'cartao' ? 'Cartão de crédito' : 'Pagar na retirada'}
+                {/* Observações */}
+                <div className={styles.field}>
+                  <label className={styles.label} htmlFor="co_obs">Observações</label>
+                  <textarea id="co_obs" className={styles.textarea} value={observacoes} onChange={(e) => setObservacoes(e.target.value)} placeholder="Alguma observação sobre o pedido" />
+                </div>
+
+                {/* Cupom */}
+                <div className={styles.field}>
+                  <label className={styles.label} htmlFor="co_cupom">Cupom de desconto</label>
+                  <div className={styles.cupomRow}>
+                    <input
+                      id="co_cupom"
+                      type="text"
+                      className={`${styles.input} ${styles.cupomInput}`}
+                      value={cupomInput}
+                      onChange={(e) => setCupomInput(e.target.value.toUpperCase())}
+                      placeholder="Digite o código"
+                      style={{ textTransform: 'uppercase' }}
+                    />
+                    <button type="button" className={styles.cupomBtn} onClick={handleAplicarCupom}>APLICAR</button>
+                  </div>
+                  {cupomStatus && (
+                    <span className={`${styles.cupomStatus} ${cupomStatus.ok ? styles.cupomOk : styles.cupomErr}`}>
+                      {cupomStatus.msg}
+                    </span>
+                  )}
+                </div>
+
+                {/* Pagamento */}
+                <div className={styles.field}>
+                  <label className={styles.label}>Forma de pagamento *</label>
+                  <div className={styles.options}>
+                    <label className={styles.optLabel}>
+                      <input type="radio" name="pagamento" value="pix" required checked={pagamento === 'pix'} onChange={() => setPagamento('pix')} />
+                      <span className={styles.optBox}>
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                        </svg>
+                        <span className={styles.optBoxText}><strong>Pix</strong></span>
+                        <span className={styles.badgeGold}>5% OFF</span>
+                      </span>
                     </label>
+                    <label className={styles.optLabel}>
+                      <input type="radio" name="pagamento" value="cartao" checked={pagamento === 'cartao'} onChange={() => setPagamento('cartao')} />
+                      <span className={styles.optBox}>
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                          <rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/>
+                        </svg>
+                        <span className={styles.optBoxText}>
+                          <strong>Cartão</strong>
+                          <small>Crédito ou débito — até 12×</small>
+                        </span>
+                      </span>
+                    </label>
+                    {entrega === 'retirada' && (
+                      <label className={styles.optLabel}>
+                        <input type="radio" name="pagamento" value="pagar_retirada" checked={pagamento === 'pagar_retirada'} onChange={() => setPagamento('pagar_retirada')} />
+                        <span className={styles.optBox}>
+                          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                            <path d="M12 2C8 2 5 5 5 9c0 3 1.5 5.5 4 7l1 4h4l1-4c2.5-1.5 4-4 4-7 0-4-3-7-7-7z"/>
+                          </svg>
+                          <span className={styles.optBoxText}>
+                            <strong>Pagar na retirada</strong>
+                            <small>Pix ou maquininha no local</small>
+                          </span>
+                        </span>
+                      </label>
+                    )}
+                  </div>
+                </div>
+
+                {/* Resumo */}
+                <div className={styles.summary}>
+                  <p className={styles.summaryTitle}>Resumo do pedido</p>
+                  {items.map((item) => (
+                    <div key={item.cartKey} className={styles.summaryLine}>
+                      <span>{item.nome}{item.qtd > 1 ? ` ×${item.qtd}` : ''}</span>
+                      <strong>{fmt(item.preco * item.qtd)}</strong>
+                    </div>
                   ))}
+                  {descontoPix > 0 && (
+                    <div className={`${styles.summaryLine} ${styles.summaryLineGold}`}>
+                      <span>Desconto PIX (5%)</span>
+                      <span>− {fmt(descontoPix)}</span>
+                    </div>
+                  )}
+                  {freteValor > 0 && (
+                    <div className={styles.summaryLine}>
+                      <span>{frete.label || 'Frete'}</span>
+                      <strong>{fmt(freteValor)}</strong>
+                    </div>
+                  )}
+                  {frete.valor > 0 && cupomAtivo?.tipo === 'frete' && (
+                    <div className={`${styles.summaryLine} ${styles.summaryLineGreen}`}>
+                      <span>Frete grátis (cupom)</span>
+                      <span>− {fmt(frete.valor)}</span>
+                    </div>
+                  )}
+                  {descontoCupom > 0 && (
+                    <div className={`${styles.summaryLine} ${styles.summaryLineGreen}`}>
+                      <span>Cupom {cupomAtivo?.codigo}</span>
+                      <span>− {fmt(descontoCupom)}</span>
+                    </div>
+                  )}
+                  <div className={styles.summaryTotal}>
+                    <span className={styles.summaryTotalLabel}>Total</span>
+                    <span className={styles.summaryTotalValue}>{fmt(total)}</span>
+                  </div>
                 </div>
-              </fieldset>
 
-              <div style={fieldStyle}>
-                <label htmlFor="co_obs" style={labelStyle}>Observações</label>
-                <textarea id="co_obs" rows={3} value={observacoes} onChange={(e) => setObservacoes(e.target.value)} placeholder="Alguma instrução especial?" style={{ ...inputStyle, resize: 'vertical' }} />
+                {submitError && <p className={styles.error} role="alert">{submitError}</p>}
+              </form>
+            </div>
+
+            {/* Footer fixo */}
+            <div className={styles.foot}>
+              <div className={styles.footTotal}>
+                <span className={styles.footTotalLabel}>Total</span>
+                <span className={styles.footTotalValue}>{fmt(total)}</span>
               </div>
-
-              {/* Cupom de desconto */}
-              <div style={{ marginBottom: '0.75rem' }}>
-                <label htmlFor="co_cupom" style={labelStyle}>Cupom de desconto</label>
-                <div style={{ display: 'flex', gap: '8px', marginTop: '0.35rem' }}>
-                  <input
-                    id="co_cupom"
-                    type="text"
-                    value={cupomInput}
-                    onChange={(e) => setCupomInput(e.target.value.toUpperCase())}
-                    placeholder="ALPHA10"
-                    style={{ ...inputStyle, flex: 1, textTransform: 'uppercase' }}
-                  />
-                  <button
-                    type="button"
-                    onClick={handleAplicarCupom}
-                    style={{
-                      padding: '0.625rem 1rem', background: 'transparent', border: '1px solid #c9a961',
-                      color: '#c9a961', fontFamily: 'Inter, sans-serif', fontSize: '0.75rem',
-                      fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap', borderRadius: 2,
-                    }}
-                  >
-                    Aplicar
-                  </button>
-                </div>
-                {cupomStatus && (
-                  <p style={{ fontSize: '0.75rem', marginTop: '4px', color: cupomStatus.ok ? '#4ade80' : '#ef4444' }}>
-                    {cupomStatus.msg}
-                  </p>
-                )}
+              <div className={styles.footActions}>
+                <button type="button" className={styles.btnGhost} onClick={onClose}>Voltar</button>
+                <button type="submit" form="checkoutForm" className={styles.btnGold} disabled={isSubmitting} aria-busy={isSubmitting}>
+                  {isSubmitting ? 'Enviando...' : 'Confirmar pedido'}
+                </button>
               </div>
-
-              {/* Resumo do pedido */}
-              <div style={{ background: '#111', border: '1px solid rgba(244,244,244,0.08)', borderRadius: 2, padding: '1rem', marginBottom: '0.75rem', fontSize: '0.8rem', fontFamily: 'Inter, sans-serif' }}>
-                <p style={{ color: 'rgba(244,244,244,0.5)', fontSize: '0.65rem', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.75rem' }}>Resumo</p>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.35rem', color: 'rgba(244,244,244,0.7)' }}>
-                  <span>Subtotal</span><span>{fmt(subtotal)}</span>
-                </div>
-                {descontoPix > 0 && (
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.35rem', color: '#c9a961' }}>
-                    <span>Desconto PIX (5%)</span><span>− {fmt(descontoPix)}</span>
-                  </div>
-                )}
-                {freteValor > 0 && (
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.35rem', color: 'rgba(244,244,244,0.7)' }}>
-                    <span>{frete.label || 'Frete'}</span><span>{fmt(freteValor)}</span>
-                  </div>
-                )}
-                {frete.valor > 0 && cupomAtivo?.tipo === 'frete' && (
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.35rem', color: '#4ade80' }}>
-                    <span>Frete grátis (cupom)</span><span>− {fmt(frete.valor)}</span>
-                  </div>
-                )}
-                {descontoCupom > 0 && (
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.35rem', color: '#4ade80' }}>
-                    <span>Cupom {cupomAtivo?.codigo}</span><span>− {fmt(descontoCupom)}</span>
-                  </div>
-                )}
-                <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid rgba(244,244,244,0.08)', paddingTop: '0.5rem', marginTop: '0.5rem', color: '#f4f4f4', fontWeight: 700, fontSize: '0.95rem' }}>
-                  <span>Total</span><span style={{ color: '#c9a961' }}>{fmt(total)}</span>
-                </div>
-              </div>
-
-              {submitError && (
-                <p role="alert" style={{ color: '#e55', fontSize: '0.875rem', marginBottom: '0.75rem' }}>
-                  {submitError}
-                </p>
-              )}
-
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                aria-busy={isSubmitting}
-                style={{
-                  width: '100%', padding: '1rem', background: '#c9a961', border: 'none', borderRadius: 2,
-                  cursor: isSubmitting ? 'wait' : 'pointer', fontWeight: 700, fontSize: '0.8rem',
-                  letterSpacing: '0.12em', textTransform: 'uppercase', color: '#000',
-                  opacity: isSubmitting ? 0.7 : 1,
-                }}
-              >
-                {isSubmitting ? 'Enviando...' : 'CONFIRMAR PEDIDO'}
-              </button>
-            </form>
-          </div>
+            </div>
+          </>
         )}
 
-        {step === 'pix' && <PixPayment total={total} txid={txid} onClose={handlePixClose} />}
+        {step === 'pix' && (
+          <>
+            <div className={styles.body}>
+              <PixPayment total={total} txid={txid} onClose={() => { clearCart(); setStep('success'); }} />
+            </div>
+          </>
+        )}
 
         {step === 'card' && mpInstance && (
-          <div style={{ padding: '1.5rem' }}>
-            <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.5rem', color: '#c9a961', marginBottom: '0.5rem' }}>
-              Pagamento com Cartão
-            </h2>
-            <p style={{ color: 'rgba(244,244,244,0.5)', marginBottom: '1rem' }}>Total: <strong style={{ color: '#f4f4f4' }}>{fmt(total)}</strong></p>
-            <CardPayment amount={total} mp={mpInstance} onTokenReceived={handleTokenReceived} />
-          </div>
+          <>
+            <div className={styles.body}>
+              <h3 className={styles.headTitle} style={{ marginBottom: 8 }}>Pagamento com <em>Cartão</em></h3>
+              <p className={styles.headSub} style={{ marginBottom: 20 }}>Total: {fmt(total)}</p>
+              <CardPaymentSafe amount={total} mp={mpInstance} onTokenReceived={() => { clearCart(); setStep('success'); }} />
+            </div>
+          </>
         )}
 
         {step === 'success' && (
-          <div style={{ padding: '2rem', textAlign: 'center' }}>
-            <div style={{ fontSize: '3rem', color: '#4caf50', marginBottom: '1rem' }} aria-hidden="true">✓</div>
-            <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.75rem', color: '#c9a961', marginBottom: '0.5rem' }}>
-              Pedido confirmado!
-            </h2>
-            {pedidoId && <p style={{ color: 'rgba(244,244,244,0.6)', marginBottom: '0.75rem' }}>Pedido #{pedidoId}</p>}
-            <p style={{ color: 'rgba(244,244,244,0.7)', marginBottom: '1.5rem' }}>
-              Em breve entraremos em contato pelo WhatsApp para confirmar os detalhes.
-            </p>
-            <button
-              type="button"
-              onClick={onClose}
-              style={{ padding: '0.875rem 2rem', background: '#c9a961', border: 'none', borderRadius: 2, cursor: 'pointer', fontWeight: 700, fontSize: '0.8rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#000' }}
-            >
-              FECHAR
-            </button>
+          <div className={styles.success}>
+            <div className={styles.successCheck} aria-hidden="true">✓</div>
+            <h2 className={styles.successTitle}>Pedido confirmado!</h2>
+            {pedidoId && <p className={styles.successId}>Pedido #{pedidoId}</p>}
+            <p className={styles.successMsg}>Em breve entraremos em contato pelo WhatsApp para confirmar os detalhes.</p>
+            <button type="button" className={styles.btnGold} onClick={onClose} style={{ maxWidth: 260 }}>FECHAR</button>
           </div>
         )}
+
       </div>
-    </>
+    </div>
   );
 }

@@ -20,7 +20,7 @@ async function fetchProducts(
 
   let query = supabase
     .from('produtos')
-    .select('id,nome,marca,preco,preco_pix,categoria_id,subcategoria,estoque,ativo,destaque,imagem_url', { count: 'exact' })
+    .select('id,nome,marca,preco,preco_pix,categoria_id,subcategoria,estoque,ativo,destaque,imagem_url,categorias!fk_categoria(nome)', { count: 'exact' })
     .eq('ativo', true)
     .order('destaque', { ascending: false })
     .order('id')

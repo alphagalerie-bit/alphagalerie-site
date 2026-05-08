@@ -1,165 +1,183 @@
 .product {
-  position: relative;
+  background: #161616;
+  border: 1px solid #1a1a1a;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
   display: flex;
   flex-direction: column;
-  background-color: #111111;
-  border: 1px solid rgba(244, 244, 244, 0.07);
-  border-radius: 2px;
-  overflow: hidden;
-  transition: border-color 0.25s ease, transform 0.25s ease;
+  position: relative;
 }
 
 .product:hover {
-  border-color: rgba(201, 169, 97, 0.3);
-  transform: translateY(-2px);
+  border-color: #c9a961;
+  transform: translateY(-6px);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
 }
 
 .imageWrapper {
-  position: relative;
-  width: 100%;
   aspect-ratio: 1 / 1;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
   overflow: hidden;
-  background-color: #1a1a1a;
 }
 
 .productImg {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   display: block;
-  transition: transform 0.4s ease;
+  transition: transform 0.6s;
+  mix-blend-mode: multiply;
+  background: #ffffff;
+  padding: 8px;
 }
 
 .product:hover .productImg {
-  transform: scale(1.04);
+  transform: scale(1.05);
 }
 
 .imgPlaceholder {
-  width: 100%;
-  height: 100%;
+  width: 50%;
+  max-width: 120px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #1a1a1a;
-  color: rgba(244, 244, 244, 0.15);
+  color: #c9a961;
+  opacity: 0.4;
 }
 
 .imgPlaceholder svg {
-  width: 48px;
-  height: 48px;
+  width: 100%;
+  height: 100%;
 }
 
 .badgesWrapper {
   position: absolute;
-  top: 0.75rem;
-  left: 0.75rem;
+  top: 14px;
+  left: 14px;
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
-  z-index: 1;
+  gap: 4px;
+  z-index: 2;
 }
 
 .badge {
   display: inline-block;
-  padding: 0.2rem 0.5rem;
-  font-size: 0.625rem;
+  background: #c9a961;
+  color: #000;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  border-radius: 2px;
+  padding: 6px 10px;
+  border-radius: 0;
 }
 
 .badgeDestaque {
   background-color: #c9a961;
-  color: #0a0a0a;
+  color: #000;
 }
 
 .badgeEsgotado {
-  background-color: rgba(244, 244, 244, 0.12);
-  color: rgba(244, 244, 244, 0.7);
-  border: 1px solid rgba(244, 244, 244, 0.2);
+  background-color: #444;
+  color: #aaa;
 }
 
 .productInfo {
+  padding: 24px;
+  flex: 1;
   display: flex;
   flex-direction: column;
-  flex: 1;
-  padding: 1rem;
-  gap: 0.25rem;
 }
 
 .productMarca {
-  font-size: 0.6875rem;
-  font-weight: 500;
-  letter-spacing: 0.12em;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: #c9a961;
-  margin: 0;
+  color: #555;
+  margin: 0 0 10px;
 }
 
 .productName {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 1.0625rem;
-  font-weight: 600;
-  line-height: 1.35;
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
   color: #f4f4f4;
-  margin: 0.25rem 0 0.75rem;
+  margin: 0 0 16px;
+  flex: 1;
 }
 
 .productPrice {
   display: flex;
   align-items: baseline;
-  gap: 0.5rem;
-  margin-top: auto;
+  gap: 8px;
+  margin-bottom: 18px;
   flex-wrap: wrap;
 }
 
 .priceValue {
-  font-size: 1.0625rem;
-  font-weight: 700;
-  color: #f4f4f4;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px;
+  font-weight: 500;
+  color: #c9a961;
+  line-height: 1;
 }
 
 .priceLabel {
-  font-size: 0.6875rem;
-  font-weight: 500;
-  color: rgba(244, 244, 244, 0.45);
-  letter-spacing: 0.05em;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: #888;
+  letter-spacing: 0.1em;
+  display: block;
+  margin-top: 6px;
+  text-transform: uppercase;
 }
 
 .productCta {
-  display: block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   width: 100%;
-  padding: 0.75rem 1rem;
-  margin-top: 0.875rem;
-  background-color: transparent;
-  border: 1px solid rgba(201, 169, 97, 0.5);
-  border-radius: 2px;
-  color: #c9a961;
-  font-size: 0.75rem;
+  padding: 14px 16px;
+  background: transparent;
+  border: 1px solid #222;
+  color: #f4f4f4;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   cursor: pointer;
-  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  transition: all 0.2s;
 }
 
 .productCta:hover:not(:disabled) {
-  background-color: #c9a961;
+  background: #c9a961;
+  color: #000;
   border-color: #c9a961;
-  color: #0a0a0a;
 }
 
 .productCta:disabled {
-  opacity: 0.35;
+  opacity: 0.4;
   cursor: not-allowed;
-  border-color: rgba(244, 244, 244, 0.2);
-  color: rgba(244, 244, 244, 0.35);
+  color: #888;
+  border-color: #222;
+}
+
+.esgotado {
+  opacity: 0.6;
 }
 
 .esgotado .productImg {
   filter: grayscale(60%);
-  opacity: 0.7;
 }
 
 @media (max-width: 640px) {
@@ -173,27 +191,44 @@
     min-width: 130px;
     aspect-ratio: unset;
     height: auto;
-    border-right: 1px solid rgba(244, 244, 244, 0.07);
+    border-right: 1px solid #1a1a1a;
     border-bottom: none;
   }
 
   .productInfo {
     flex: 1;
-    padding: 14px;
+    padding: 16px;
     justify-content: space-between;
   }
 
+  .productMarca {
+    font-size: 10px;
+    margin-bottom: 6px;
+  }
+
   .productName {
-    font-size: 1rem;
+    font-size: 18px;
+    margin-bottom: 10px;
+    line-height: 1.2;
   }
 
   .priceValue {
-    font-size: 1.25rem;
+    font-size: 26px;
+  }
+
+  .priceLabel {
+    font-size: 10px;
   }
 
   .productCta {
-    padding: 10px 12px;
-    font-size: 10px;
-    min-height: 40px;
+    padding: 12px 16px;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    min-height: 44px;
+  }
+
+  .badge {
+    font-size: 8px;
+    padding: 4px 8px;
   }
 }

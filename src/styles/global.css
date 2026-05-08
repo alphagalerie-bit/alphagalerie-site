@@ -88,6 +88,33 @@ button {
   color: var(--text);
 }
 
+/* Products grid — responsive breakpoints matching original */
+.products-grid-responsive {
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 12px !important;
+}
+
+@media (min-width: 480px) {
+  .products-grid-responsive {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)) !important;
+    gap: 20px !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .products-grid-responsive {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+    gap: 32px !important;
+  }
+}
+
+/* Filter scroll — hide scrollbar */
+.filter-scroll::-webkit-scrollbar { display: none; }
+
+@keyframes shimmer {
+  to { background-position: -200% 0; }
+}
+
 @keyframes fadeUp {
   from {
     opacity: 0;

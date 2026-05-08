@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
 
 interface CardPaymentProps {
   amount: number;
@@ -7,68 +7,134 @@ interface CardPaymentProps {
   onTokenReceived: (token: string, paymentMethodId: string) => void;
 }
 
-export default function CardPayment({ amount, mp, onTokenReceived }: CardPaymentProps) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const cardFormRef = useRef<any>(null);
+function maskCardNumber(v: string) {
+  return v.replace(/\D/g, '').slice(0, 16).replace(/(.{4})/g, '$1 ').trim();
+}
 
-  useEffect(() => {
-    if (!mp) return;
-    const cardForm = mp.cardForm({
-      amount: String(amount.toFixed(2)),
-      autoMount: true,
-      form: {
-        id: 'cardFormInternal',
-        cardNumber: { id: 'mp_card_number', placeholder: 'Número do cartão' },
-        expirationDate: { id: 'mp_expiration_date', placeholder: 'MM/AA' },
-        securityCode: { id: 'mp_security_code', placeholder: 'CVV' },
-        cardholderName: { id: 'mp_cardholder_name', placeholder: 'Nome no cartão' },
-        installments: { id: 'mp_installments' },
-      },
-      callbacks: {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onFormMounted: (error: any) => {
-          if (error) console.error('[CardPayment] onFormMounted error:', error);
-        },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onCardTokenReceived: (error: any, token: any) => {
-          if (error) { console.error('[CardPayment] token error:', error); return; }
-          if (token) onTokenReceived(token.id, token.payment_method_id);
-        },
-      },
-    });
-    cardFormRef.current = cardForm;
-    return () => {
-      try { cardFormRef.current?.unmount(); } catch { /* ignore */ }
-    };
-  }, [mp, amount, onTokenReceived]);
+function maskExpiry(v: string) {
+  const d = v.replace(/\D/g, '').slice(0, 4);
+  return d.length > 2 ? d.slice(0, 2) + '/' + d.slice(2) : d;
+}
+
+export default function CardPayment({ mp, onTokenReceived }: CardPaymentProps) {
+  const [cardNumber, setCardNumber] = useState('');
+  const [expiry, setExpiry] = useState('');
+  const [cvv, setCvv] = useState('');
+  const [holderName, setHolderName] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
+
+  const fieldStyle: React.CSSProperties = {
+    width: '100%', padding: '10px 14px',
+    background: '#0a0a0a', border: '1px solid #222',
+    color: '#f4f4f4', fontFamily: "'Inter', sans-serif",
+    fontSize: 14, boxSizing: 'border-box' as const,
+    outline: 'none',
+  };
+
+  const labelStyle: React.CSSProperties = {
+    fontFamily: "'JetBrains Mono', monospace",
+    fontSize: 10, letterSpacing: '0.2em',
+    textTransform: 'uppercase' as const,
+    color: '#c9a961', display: 'block', marginBottom: 6,
+  };
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+
+    const digits = cardNumber.replace(/\s/g, '');
+    const [expirationMonth, expirationYear] = expiry.split('/');
+
+    try {
+      const token = await mp.createCardToken({
+        cardNumber: digits,
+        cardholderName: holderName,
+        cardExpirationMonth: expirationMonth,
+        cardExpirationYear: '20' + expirationYear,
+        securityCode: cvv,
+      });
+      onTokenReceived(token.id, token.payment_method_id ?? '');
+    } catch (err: unknown) {
+      console.error('[MP] createCardToken error:', err);
+      setError('Dados do cartão inválidos. Verifique e tente novamente.');
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
-    <form id="cardFormInternal" className="card-payment-form" noValidate>
-      <div className="card-payment-field">
-        <label htmlFor="mp_card_number">Número do cartão</label>
-        <div id="mp_card_number" className="mp-field" />
+    <form ref={formRef} onSubmit={handleSubmit} noValidate style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+      <div>
+        <label style={labelStyle}>Número do cartão *</label>
+        <input
+          type="text" inputMode="numeric" autoComplete="cc-number"
+          placeholder="0000 0000 0000 0000" required
+          value={cardNumber}
+          onChange={(e) => setCardNumber(maskCardNumber(e.target.value))}
+          style={fieldStyle}
+        />
       </div>
-      <div className="card-payment-row">
-        <div className="card-payment-field">
-          <label htmlFor="mp_expiration_date">Validade</label>
-          <div id="mp_expiration_date" className="mp-field" />
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+        <div>
+          <label style={labelStyle}>Validade *</label>
+          <input
+            type="text" inputMode="numeric" autoComplete="cc-exp"
+            placeholder="MM/AA" required maxLength={5}
+            value={expiry}
+            onChange={(e) => setExpiry(maskExpiry(e.target.value))}
+            style={fieldStyle}
+          />
         </div>
-        <div className="card-payment-field">
-          <label htmlFor="mp_security_code">CVV</label>
-          <div id="mp_security_code" className="mp-field" />
+        <div>
+          <label style={labelStyle}>CVV *</label>
+          <input
+            type="text" inputMode="numeric" autoComplete="cc-csc"
+            placeholder="123" required maxLength={4}
+            value={cvv}
+            onChange={(e) => setCvv(e.target.value.replace(/\D/g, '').slice(0, 4))}
+            style={fieldStyle}
+          />
         </div>
       </div>
-      <div className="card-payment-field">
-        <label htmlFor="mp_cardholder_name">Nome no cartão</label>
-        <div id="mp_cardholder_name" className="mp-field" />
+
+      <div>
+        <label style={labelStyle}>Nome no cartão *</label>
+        <input
+          type="text" autoComplete="cc-name"
+          placeholder="Como impresso no cartão" required
+          value={holderName}
+          onChange={(e) => setHolderName(e.target.value.toUpperCase())}
+          style={{ ...fieldStyle, textTransform: 'uppercase' }}
+        />
       </div>
-      <div className="card-payment-field">
-        <label htmlFor="mp_installments">Parcelas</label>
-        <div id="mp_installments" className="mp-field" />
-      </div>
-      <button type="submit" className="card-payment-submit" aria-label="Confirmar pagamento com cartão">
-        Confirmar Pagamento
+
+      {error && (
+        <p style={{ color: '#ef4444', fontFamily: "'JetBrains Mono', monospace", fontSize: 11, margin: 0 }}>
+          {error}
+        </p>
+      )}
+
+      <button
+        type="submit"
+        disabled={loading}
+        style={{
+          width: '100%', padding: '16px', background: '#c9a961', border: 'none',
+          color: '#000', fontFamily: "'JetBrains Mono', monospace",
+          fontSize: 12, fontWeight: 700, letterSpacing: '0.2em',
+          textTransform: 'uppercase', cursor: loading ? 'wait' : 'pointer',
+          opacity: loading ? 0.7 : 1, marginTop: 8,
+        }}
+      >
+        {loading ? 'Processando...' : 'Confirmar Pagamento'}
       </button>
+
+      <p style={{ textAlign: 'center', color: '#555', fontFamily: "'JetBrains Mono', monospace", fontSize: 10, letterSpacing: '0.1em', margin: 0 }}>
+        🔒 Pagamento seguro via Mercado Pago
+      </p>
     </form>
   );
 }
