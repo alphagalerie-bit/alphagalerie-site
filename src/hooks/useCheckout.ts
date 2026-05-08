@@ -28,7 +28,10 @@ export function useCheckout() {
     try {
       const subtotal = itens.reduce((acc, i) => acc + i.preco * i.qtd, 0);
 
+      const numero = `AG${Date.now()}`;
+
       const payload = {
+        numero,
         cliente_nome: dados.nome,
         cliente_whatsapp: dados.telefone,
         cliente_email: dados.email ?? null,
