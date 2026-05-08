@@ -1,0 +1,234 @@
+.product {
+  background: #161616;
+  border: 1px solid #1a1a1a;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.product:hover {
+  border-color: #c9a961;
+  transform: translateY(-6px);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+.imageWrapper {
+  aspect-ratio: 1 / 1;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.productImg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  transition: transform 0.6s;
+  mix-blend-mode: multiply;
+  background: #ffffff;
+  padding: 8px;
+}
+
+.product:hover .productImg {
+  transform: scale(1.05);
+}
+
+.imgPlaceholder {
+  width: 50%;
+  max-width: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #c9a961;
+  opacity: 0.4;
+}
+
+.imgPlaceholder svg {
+  width: 100%;
+  height: 100%;
+}
+
+.badgesWrapper {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  z-index: 2;
+}
+
+.badge {
+  display: inline-block;
+  background: #c9a961;
+  color: #000;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 6px 10px;
+  border-radius: 0;
+}
+
+.badgeDestaque {
+  background-color: #c9a961;
+  color: #000;
+}
+
+.badgeEsgotado {
+  background-color: #444;
+  color: #aaa;
+}
+
+.productInfo {
+  padding: 24px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.productMarca {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #555;
+  margin: 0 0 10px;
+}
+
+.productName {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: #f4f4f4;
+  margin: 0 0 16px;
+  flex: 1;
+}
+
+.productPrice {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+
+.priceValue {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px;
+  font-weight: 500;
+  color: #c9a961;
+  line-height: 1;
+}
+
+.priceLabel {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: #888;
+  letter-spacing: 0.1em;
+  display: block;
+  margin-top: 6px;
+  text-transform: uppercase;
+}
+
+.productCta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 14px 16px;
+  background: transparent;
+  border: 1px solid #222;
+  color: #f4f4f4;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.productCta:hover:not(:disabled) {
+  background: #c9a961;
+  color: #000;
+  border-color: #c9a961;
+}
+
+.productCta:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  color: #888;
+  border-color: #222;
+}
+
+.esgotado {
+  opacity: 0.6;
+}
+
+.esgotado .productImg {
+  filter: grayscale(60%);
+}
+
+@media (max-width: 640px) {
+  .product {
+    flex-direction: row;
+    min-height: 130px;
+  }
+
+  .imageWrapper {
+    width: 130px;
+    min-width: 130px;
+    aspect-ratio: unset;
+    height: auto;
+    border-right: 1px solid #1a1a1a;
+    border-bottom: none;
+  }
+
+  .productInfo {
+    flex: 1;
+    padding: 16px;
+    justify-content: space-between;
+  }
+
+  .productMarca {
+    font-size: 10px;
+    margin-bottom: 6px;
+  }
+
+  .productName {
+    font-size: 18px;
+    margin-bottom: 10px;
+    line-height: 1.2;
+  }
+
+  .priceValue {
+    font-size: 26px;
+  }
+
+  .priceLabel {
+    font-size: 10px;
+  }
+
+  .productCta {
+    padding: 12px 16px;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    min-height: 44px;
+  }
+
+  .badge {
+    font-size: 8px;
+    padding: 4px 8px;
+  }
+}

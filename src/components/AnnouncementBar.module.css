@@ -1,0 +1,31 @@
+.bar {
+  background: #000;
+  border-bottom: 1px solid #1a1a1a;
+  color: #888;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 10px 0;
+  overflow: hidden;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.track {
+  display: inline-flex;
+  gap: 60px;
+  animation: marquee 50s linear infinite;
+}
+
+.track span::before {
+  content: '◆';
+  margin-right: 60px;
+  color: #c9a961;
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}

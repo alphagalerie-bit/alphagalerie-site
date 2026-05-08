@@ -1,0 +1,14 @@
+:root {
+  --bg: #0a0a0a;
+  --bg-soft: #111;
+  --bg-card: #161616;
+  --line: #222;
+  --line-soft: #1a1a1a;
+  --text: #f4f4f4;
+  --text-dim: #888;
+  --text-faint: #555;
+  --gold: #c9a961;
+  --gold-soft: #b39555;
+  --gold-glow: rgba(201, 169, 97, 0.25);
+  --maxw: 1320px;
+}
