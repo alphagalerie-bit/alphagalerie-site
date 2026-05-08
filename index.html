@@ -8,7 +8,7 @@
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
   <!-- VERSÃO DO SITE — atualizar a cada deploy. Aparece no rodapé. -->
-  <meta name="site-version" content="v2026.05.07-C" />
+  <meta name="site-version" content="v2026.05.08-A" />
   <title>ALPHA GALERIE — Headshop, Charutaria, Arguile · Alphaville</title>
   <meta name="description" content="Mais de 10 anos sendo a referência em headshop, charutaria, arguile e lifestyle em Alphaville." />
   <!-- Open Graph (WhatsApp / Facebook / Instagram / Telegram / Slack) -->
@@ -17,8 +17,8 @@
   <meta property="og:site_name" content="ALPHA GALERIE" />
   <meta property="og:title" content="ALPHA GALERIE — Alphaville" />
   <meta property="og:description" content="Headshop · Charutaria · Arguile · Lifestyle · Alphaville/Barueri" />
-  <meta property="og:image" content="https://alphagalerie.com/og-default.jpg" />
-  <meta property="og:image:secure_url" content="https://alphagalerie.com/og-default.jpg" />
+  <meta property="og:image" content="https://alphagalerie.com/og-default.jpg?v=v2026.05.08-A" />
+  <meta property="og:image:secure_url" content="https://alphagalerie.com/og-default.jpg?v=v2026.05.08-A" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="1200" />
   <meta property="og:url" content="https://alphagalerie.com" />
@@ -27,7 +27,7 @@
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="ALPHA GALERIE — Alphaville" />
   <meta name="twitter:description" content="Headshop · Charutaria · Arguile · Lifestyle" />
-  <meta name="twitter:image" content="https://alphagalerie.com/og-default.jpg" />
+  <meta name="twitter:image" content="https://alphagalerie.com/og-default.jpg?v=v2026.05.08-A" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -381,6 +381,58 @@
       .payment-opt-box { padding: 12px 12px; gap: 10px; }
       .payment-opt-box small { font-size: 11px; line-height: 1.4; }
       .payment-opt-box > span:last-child { flex-shrink: 0; }
+    }
+
+    @media (max-width: 480px) {
+      .container,
+      .hero-grid { padding: 0 16px; }
+
+      .nav-inner {
+        padding: 12px 14px;
+        gap: 10px;
+      }
+      .nav-links a.cart-btn {
+        padding: 10px 14px;
+        font-size: 11px;
+        gap: 8px;
+      }
+
+      .hero { padding: 28px 0 40px; }
+      .hero h1 { font-size: clamp(30px, 10vw, 42px); }
+      .hero-lead { font-size: 15px; }
+      .hero-meta {
+        grid-template-columns: 1fr;
+        gap: 14px;
+        margin-top: 36px;
+      }
+      .hero-meta-item .num { font-size: 28px; }
+
+      .section { padding: 40px 0 52px; }
+
+      .product {
+        flex-direction: column;
+        min-height: 0;
+      }
+      .product-img {
+        width: 100%;
+        min-width: 0;
+        aspect-ratio: 1 / 1;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--line-soft);
+      }
+      .product-info { padding: 14px; }
+      .product-name { font-size: 20px; }
+      .product-price { font-size: 24px; }
+
+      .checkout-foot-actions {
+        flex-direction: column-reverse;
+      }
+      .checkout-foot-actions .btn,
+      .checkout-foot-actions .btn-ghost {
+        width: 100%;
+        flex: 1 1 auto;
+      }
     }
 
     /* ============================================
@@ -1846,7 +1898,7 @@
         </div>
       </div>
       <div class="footer-bottom">
-        <div>© 2026 Alpha Galerie · Todos os direitos reservados <span style="color:var(--text-faint);font-size:9px;margin-left:8px;letter-spacing:0.05em;">v2026.05.07-C</span></div>
+        <div>© 2026 Alpha Galerie · Todos os direitos reservados <span style="color:var(--text-faint);font-size:9px;margin-left:8px;letter-spacing:0.05em;">v2026.05.08-A</span></div>
         <div class="warning">⚠ Produtos destinados a maiores de 18 anos</div>
       </div>
     </div>
@@ -2373,6 +2425,7 @@
     let cart = JSON.parse(localStorage.getItem('alpha_cart') || '[]');
     let currentFilter = 'todos';
     let productsByCategory = {};
+    const SITE_VERSION = document.querySelector('meta[name="site-version"]')?.content || 'v0';
 
     // ============================================
     // FORMATAR DINHEIRO
@@ -2397,6 +2450,18 @@
         promise,
         new Promise((_, reject) => setTimeout(() => reject(new Error('TIMEOUT_' + (label || ''))), ms))
       ]);
+    }
+
+    function withAssetVersion(url) {
+      if (!url) return '';
+      try {
+        const resolved = new URL(url, window.location.href);
+        resolved.searchParams.set('v', SITE_VERSION);
+        return resolved.toString();
+      } catch (e) {
+        const sep = url.includes('?') ? '&' : '?';
+        return `${url}${sep}v=${encodeURIComponent(SITE_VERSION)}`;
+      }
     }
 
     function showLoadError() {
@@ -2574,7 +2639,7 @@
         const temVariacoes = vars.length > 0;
 
         const img = p.imagem_url
-          ? `<img src="${p.imagem_url}" alt="${p.nome}" loading="lazy" />`
+          ? `<img src="${withAssetVersion(p.imagem_url)}" alt="${p.nome}" loading="lazy" />`
           : `<svg class="product-img-placeholder" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.5">
                <rect x="20" y="30" width="60" height="50" rx="2"/>
                <path d="M30 80 L45 55 L60 70 L75 50 L80 60"/>
@@ -2651,7 +2716,7 @@
       const inCart = cart.find(i => i.id === prod.id);
 
       imgEl.innerHTML = prod.imagem_url
-        ? `<img src="${prod.imagem_url}" alt="${prod.nome}" />`
+        ? `<img src="${withAssetVersion(prod.imagem_url)}" alt="${prod.nome}" />`
         : `<svg class="product-img-placeholder" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.5" style="width:120px;height:120px;color:#ccc;">
              <rect x="20" y="30" width="60" height="50" rx="2"/>
              <path d="M30 80 L45 55 L60 70 L75 50 L80 60"/>
