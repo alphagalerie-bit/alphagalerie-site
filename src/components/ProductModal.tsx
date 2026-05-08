@@ -1,10 +1,12 @@
 // src/components/ProductModal.tsx
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '../lib/supabase';
 import { useCartStore } from '../store/cart';
+import { useToastStore } from '../store/toast';
 import { formatCurrency } from '../lib/format';
-import type { Produto } from '../types';
+import type { Produto, Variacao } from '../types';
+import VariacoesModal from './VariacoesModal';
 
 interface ProductModalProps {
   produtoId: number | null;
@@ -17,16 +19,24 @@ const FOCUSABLE =
 async function fetchProduto(id: number): Promise<Produto> {
   const { data, error } = await supabase
     .from('produtos')
-    .select('*, categorias(*)')
+    .select('*, categorias(*), variacoes(id,produto_id,nome,preco,estoque,ordem,ativo,criado_em)')
     .eq('id', id)
     .single();
   if (error) throw error;
-  return { ...data, _variacoes: [] } as Produto;
+
+  const variacoes = ((data as { variacoes?: Variacao[] }).variacoes ?? [])
+    .filter((variacao) => variacao.ativo)
+    .slice()
+    .sort((a, b) => a.ordem - b.ordem);
+
+  return { ...data, _variacoes: variacoes } as Produto;
 }
 
 export default function ProductModal({ produtoId, onClose }: ProductModalProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
+  const [showVariacoes, setShowVariacoes] = useState(false);
   const addItem = useCartStore((s) => s.addItem);
+  const showToast = useToastStore((s) => s.showToast);
 
   const { data: produto, isLoading } = useQuery({
     queryKey: ['produto', produtoId],
@@ -81,7 +91,41 @@ export default function ProductModal({ produtoId, onClose }: ProductModalProps) 
 
   function handleAddToCart() {
     if (!produto) return;
+    if (produto._variacoes.length > 0) {
+      setShowVariacoes(true);
+      return;
+    }
     addItem(produto);
+    showToast({
+      id: produto.id,
+      cartKey: String(produto.id),
+      nome: produto.nome,
+      marca: produto.marca,
+      categoria: produto.categorias?.nome ?? '',
+      preco: produto.preco_pix ?? produto.preco,
+      imagem: produto.imagem_url,
+      estoque: produto.estoque,
+      qtd: 1,
+    });
+    onClose();
+  }
+
+  function handleSelectVariacao(produtoSelecionado: Produto, variacao: Variacao) {
+    addItem(produtoSelecionado, variacao);
+    showToast({
+      id: produtoSelecionado.id,
+      cartKey: `${produtoSelecionado.id}::${variacao.id}`,
+      variacaoId: variacao.id,
+      nome: produtoSelecionado.nome,
+      variacao: variacao.nome,
+      marca: produtoSelecionado.marca,
+      categoria: produtoSelecionado.categorias?.nome ?? '',
+      preco: variacao.preco ?? produtoSelecionado.preco_pix ?? produtoSelecionado.preco,
+      imagem: produtoSelecionado.imagem_url,
+      estoque: variacao.estoque,
+      qtd: 1,
+    });
+    setShowVariacoes(false);
     onClose();
   }
 
@@ -184,7 +228,11 @@ export default function ProductModal({ produtoId, onClose }: ProductModalProps) 
                   aria-label={`Adicionar ${produto.nome} ao carrinho`}
                   style={{ padding: '0.875rem 1rem', background: produto.ativo ? '#c9a961' : 'rgba(244,244,244,0.1)', color: produto.ativo ? '#0a0a0a' : 'rgba(244,244,244,0.35)', border: 'none', fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: '0.75rem', letterSpacing: '0.12em', textTransform: 'uppercase', cursor: produto.ativo ? 'pointer' : 'not-allowed', borderRadius: 2 }}
                 >
-                  {produto.ativo ? 'ADICIONAR AO CARRINHO' : 'ESGOTADO'}
+                  {produto.ativo
+                    ? produto._variacoes.length > 0
+                      ? 'SELECIONAR VARIAÇÃO'
+                      : 'ADICIONAR AO CARRINHO'
+                    : 'ESGOTADO'}
                 </button>
 
                 <button
@@ -204,6 +252,12 @@ export default function ProductModal({ produtoId, onClose }: ProductModalProps) 
           </div>
         )}
       </div>
+
+      <VariacoesModal
+        produto={showVariacoes ? produto ?? null : null}
+        onClose={() => setShowVariacoes(false)}
+        onSelect={handleSelectVariacao}
+      />
     </>
   );
 }

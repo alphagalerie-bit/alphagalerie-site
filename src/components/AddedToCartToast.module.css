@@ -1,0 +1,130 @@
+.toast {
+  position: fixed;
+  top: max(80px, env(safe-area-inset-top));
+  right: 24px;
+  width: min(320px, calc(100vw - 32px));
+  z-index: 340;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px;
+  background: rgba(17, 17, 17, 0.98);
+  border: 1px solid rgba(201, 169, 97, 0.28);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(10px);
+  transform: translateX(0);
+  opacity: 1;
+  transition: transform 0.28s ease, opacity 0.28s ease;
+  pointer-events: auto;
+}
+
+.hidden {
+  transform: translateX(calc(100% + 28px));
+  opacity: 0;
+  pointer-events: none;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.media {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  overflow: hidden;
+  background: #0a0a0a;
+  border: 1px solid rgba(244, 244, 244, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.placeholder {
+  color: rgba(201, 169, 97, 0.7);
+}
+
+.content {
+  min-width: 0;
+  flex: 1;
+}
+
+.eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #c9a961;
+  margin-bottom: 3px;
+}
+
+.name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px;
+  line-height: 1.15;
+  color: #f4f4f4;
+  margin-bottom: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.variation {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(244, 244, 244, 0.45);
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.price {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(244, 244, 244, 0.62);
+}
+
+.action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid rgba(201, 169, 97, 0.35);
+  background: transparent;
+  color: #c9a961;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  transition: background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+}
+
+.action:hover {
+  background: #c9a961;
+  color: #0a0a0a;
+  border-color: #c9a961;
+}
+
+@media (max-width: 420px) {
+  .toast {
+    right: 16px;
+    width: calc(100vw - 32px);
+  }
+}

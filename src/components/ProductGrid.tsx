@@ -3,6 +3,7 @@ import { useState, useMemo, useEffect, useRef } from 'react';
 import { useCategories } from '../hooks/useCategories';
 import { useProducts } from '../hooks/useProducts';
 import { useCartStore } from '../store/cart';
+import { useToastStore } from '../store/toast';
 import type { Produto, Variacao } from '../types';
 import ProductCard from './ProductCard';
 import VariacoesModal from './VariacoesModal';
@@ -73,6 +74,7 @@ export default function ProductGrid({
   const { data, isLoading, isFetching } = useProducts(categoryId, page, search);
   const { data: categorias = [] } = useCategories();
   const addItem = useCartStore((s) => s.addItem);
+  const showToast = useToastStore((s) => s.showToast);
 
   const produtos = data?.produtos ?? [];
   const total = data?.total ?? 0;
@@ -92,10 +94,34 @@ export default function ProductGrid({
 
   function handleAddToCart(produto: Produto) {
     addItem(produto);
+    showToast({
+      id: produto.id,
+      cartKey: String(produto.id),
+      nome: produto.nome,
+      marca: produto.marca,
+      categoria: produto.categorias?.nome ?? '',
+      preco: produto.preco_pix ?? produto.preco,
+      imagem: produto.imagem_url,
+      estoque: produto.estoque,
+      qtd: 1,
+    });
   }
 
   function handleSelectVariacao(produto: Produto, variacao: Variacao) {
     addItem(produto, variacao);
+    showToast({
+      id: produto.id,
+      cartKey: `${produto.id}::${variacao.id}`,
+      variacaoId: variacao.id,
+      nome: produto.nome,
+      variacao: variacao.nome,
+      marca: produto.marca,
+      categoria: produto.categorias?.nome ?? '',
+      preco: variacao.preco ?? produto.preco_pix ?? produto.preco,
+      imagem: produto.imagem_url,
+      estoque: variacao.estoque,
+      qtd: 1,
+    });
     setVariacoesTarget(null);
   }
 

@@ -32,7 +32,7 @@ const Header: FC<HeaderProps> = ({ onOpenCart }) => {
         <div className={styles.navInner}>
           <a href="/" aria-label="Alpha Galerie — página inicial">
             <img
-              src="/logo.png"
+              src="/logo.svg"
               alt="alpha.galerie"
               className={styles.logoImg}
               width={120}
