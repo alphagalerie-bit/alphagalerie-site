@@ -161,3 +161,39 @@
   filter: grayscale(60%);
   opacity: 0.7;
 }
+
+@media (max-width: 640px) {
+  .product {
+    flex-direction: row;
+    min-height: 130px;
+  }
+
+  .imageWrapper {
+    width: 130px;
+    min-width: 130px;
+    aspect-ratio: unset;
+    height: auto;
+    border-right: 1px solid rgba(244, 244, 244, 0.07);
+    border-bottom: none;
+  }
+
+  .productInfo {
+    flex: 1;
+    padding: 14px;
+    justify-content: space-between;
+  }
+
+  .productName {
+    font-size: 1rem;
+  }
+
+  .priceValue {
+    font-size: 1.25rem;
+  }
+
+  .productCta {
+    padding: 10px 12px;
+    font-size: 10px;
+    min-height: 40px;
+  }
+}

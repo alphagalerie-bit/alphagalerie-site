@@ -119,7 +119,8 @@ export default function ProductGrid({
     >
       {/* Filtro de categorias */}
       <div
-        style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}
+        className="filter-scroll"
+        style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1.5rem', overflowX: 'auto', WebkitOverflowScrolling: 'touch' as React.CSSProperties['WebkitOverflowScrolling'], scrollbarWidth: 'none' as React.CSSProperties['scrollbarWidth'], paddingBottom: '4px' }}
         role="group"
         aria-label="Filtrar por categoria"
       >
@@ -155,7 +156,8 @@ export default function ProductGrid({
       {/* Filtro de subcategorias (client-side, apenas da página atual) */}
       {subcategorias.length > 0 && (
         <div
-          style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1.25rem' }}
+          className="filter-scroll"
+          style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1.25rem', overflowX: 'auto', WebkitOverflowScrolling: 'touch' as React.CSSProperties['WebkitOverflowScrolling'], scrollbarWidth: 'none' as React.CSSProperties['scrollbarWidth'], paddingBottom: '4px' }}
           role="group"
           aria-label="Filtrar por subcategoria"
         >
