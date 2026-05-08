@@ -1,5 +1,6 @@
 import { lazy, Suspense, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { useVisita } from '../hooks/useVisita';
 import AnnouncementBar from '../components/AnnouncementBar';
 import HeroSection from '../components/HeroSection';
 import Header from '../components/Header';
@@ -17,6 +18,8 @@ export default function Home() {
   const [categoryId, setCategoryId] = useState<number | null>(null);
   const [cartOpen, setCartOpen] = useState(false);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
+
+  useVisita();
 
   const produtoIdParam = searchParams.get('p');
   const produtoId = produtoIdParam ? parseInt(produtoIdParam, 10) : null;
