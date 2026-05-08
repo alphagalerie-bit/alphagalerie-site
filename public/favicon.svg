@@ -1,0 +1,32 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="faviconTitle faviconDesc">
+  <title id="faviconTitle">Alpha Galerie</title>
+  <desc id="faviconDesc">Ícone circular com monograma AG em dourado.</desc>
+  <defs>
+    <filter id="faviconGlow">
+      <feGaussianBlur stdDeviation="0.6" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <!-- Background circle -->
+  <circle cx="32" cy="32" r="32" fill="#0a0a0a" />
+  <!-- Border -->
+  <circle cx="32" cy="32" r="30" fill="none" stroke="#c9a961" stroke-width="1.8" filter="url(#faviconGlow)" />
+  <!-- Inner guide -->
+  <circle cx="32" cy="32" r="22" fill="none" stroke="#c9a961" stroke-width="0.6" stroke-opacity="0.15" />
+  
+  <!-- Letter A -->
+  <g>
+    <polygon points="32,14 42,35 38,35 35,29 29,29 26,35 22,35" fill="#f4f4f4" />
+    <rect x="30.5" y="26" width="3" height="4" fill="#c9a961" />
+  </g>
+  
+  <!-- Letter G -->
+  <g>
+    <circle cx="44" cy="32" r="11.5" fill="none" stroke="#c9a961" stroke-width="2.2" />
+    <rect x="44" y="30.5" width="8" height="3.5" fill="#c9a961" />
+    <circle cx="44" cy="32" r="6.5" fill="#0a0a0a" />
+  </g>
+</svg>

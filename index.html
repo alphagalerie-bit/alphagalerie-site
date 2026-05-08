@@ -11,8 +11,6 @@
   <meta name="site-version" content="v2026.05.08-A" />
   <title>ALPHA GALERIE — Headshop, Charutaria, Arguile · Alphaville</title>
   <meta name="description" content="Mais de 10 anos sendo a referência em headshop, charutaria, arguile e lifestyle em Alphaville." />
-  <!-- Open Graph (WhatsApp / Facebook / Instagram / Telegram / Slack) -->
-  <!-- A Edge Function og-product reescreve estas tags quando ?p=ID está presente -->
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="ALPHA GALERIE" />
   <meta property="og:title" content="ALPHA GALERIE — Alphaville" />
@@ -23,7 +21,6 @@
   <meta property="og:image:height" content="1200" />
   <meta property="og:url" content="https://alphagalerie.com" />
   <meta property="og:locale" content="pt_BR" />
-  <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="ALPHA GALERIE — Alphaville" />
   <meta name="twitter:description" content="Headshop · Charutaria · Arguile · Lifestyle" />
@@ -31,24 +28,18 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <style>
-    /* ============================================
-       ALPHA GALERIE — design system
-       paleta: preto + branco + dourado
-       ============================================ */
-    :root {
-      --bg: #0a0a0a;
-      --bg-soft: #111;
-      --bg-card: #161616;
-      --line: #222;
-      --line-soft: #1a1a1a;
-      --text: #f4f4f4;
-      --text-dim: #888;
-      --text-faint: #555;
-      --gold: #c9a961;
-      --gold-soft: #b39555;
-      --gold-glow: rgba(201, 169, 97, 0.25);
-      --maxw: 1320px;
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Alpha Galerie",
+    "url": "https://alphagalerie.com",
+    "telephone": "+5511942920076",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Barueri",
+      "addressRegion": "SP",
+      "addressCountry": "BR"
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -4085,6 +4076,9 @@
     document.getElementById('variacoesModal').style.display = 'none';
   }
   </script>
-
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
 </body>
 </html>

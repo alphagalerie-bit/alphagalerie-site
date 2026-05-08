@@ -1,0 +1,2 @@
+/* Styles moved to src/styles/tokens.css and src/styles/global.css */
+.filter-scroll::-webkit-scrollbar { display: none; }
