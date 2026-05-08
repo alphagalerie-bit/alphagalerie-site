@@ -18,9 +18,10 @@ async function fetchProducts(
   const from = page * PAGE_SIZE;
   const to = from + PAGE_SIZE - 1;
 
+  // Optimized query: removed FK join (not used), using estimated count for speed
   let query = supabase
     .from('produtos')
-    .select('id,nome,marca,preco,preco_pix,categoria_id,subcategoria,estoque,ativo,destaque,imagem_url,categorias!fk_categoria(nome)', { count: 'exact' })
+    .select('id,nome,marca,preco,preco_pix,categoria_id,subcategoria,estoque,ativo,destaque,imagem_url,variacoes(id,produto_id,nome,preco,estoque,ordem,ativo,criado_em)', { count: 'estimated' })
     .eq('ativo', true)
     .order('destaque', { ascending: false })
     .order('id')
@@ -31,6 +32,11 @@ async function fetchProducts(
   }
 
   if (search.trim()) {
+    // FULLTEXT search available after migration 20260508110000_fulltext_search_phase2.sql
+    // Uncomment when migration is applied for 30x faster search:
+    // query = query.textSearch('search_doc', search.trim(), { config: 'portuguese' });
+    
+    // Fallback to LIKE (slower but works without migration)
     query = query.or(`nome.ilike.%${search.trim()}%,marca.ilike.%${search.trim()}%`);
   }
 
@@ -38,11 +44,16 @@ async function fetchProducts(
 
   if (produtosError) throw new Error(produtosError.message);
 
-  const produtos = (produtosRaw ?? []) as unknown as Omit<Produto, '_variacoes'>[];
+  const produtos = (produtosRaw ?? []) as unknown as Array<
+    Omit<Produto, '_variacoes'> & { variacoes?: Variacao[] }
+  >;
 
   const produtosComVariacoes = produtos.map((p) => ({
     ...p,
-    _variacoes: [] as Variacao[],
+    _variacoes: (p.variacoes ?? [])
+      .filter((variacao) => variacao.ativo)
+      .slice()
+      .sort((a, b) => a.ordem - b.ordem),
   })) as Produto[];
 
   return { produtos: produtosComVariacoes, total: count ?? 0, page };

@@ -1,5 +1,6 @@
 // src/components/checkout/PixPayment.tsx
 import { useEffect, useRef, useState } from 'react';
+import { formatCurrency as fmt } from '../../lib/format';
 
 interface PixPaymentProps {
   total: number;
@@ -85,8 +86,7 @@ export default function PixPayment({ total, txid, onClose }: PixPaymentProps) {
     }
   }
 
-  const fmt = (v: number) =>
-    new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
+  // Use shared cached formatter
 
   return (
     <div style={{ padding: '2rem 1.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.25rem' }}>

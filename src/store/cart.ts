@@ -72,15 +72,16 @@ export const useCartStore = create<CartState>()(
       },
 
       changeQty(cartKey, delta) {
-        set((state) => ({
-          items: state.items.map((i) => {
-            if (i.cartKey !== cartKey) return i;
+        set((state) => {
+          const items = state.items.flatMap((i) => {
+            if (i.cartKey !== cartKey) return [i];
             const newQty = i.qtd + delta;
-            if (newQty < 1) return i;
-            if (i.estoque !== null && newQty > i.estoque) return i;
-            return { ...i, qtd: newQty };
-          }),
-        }));
+            if (newQty < 1) return [];
+            if (i.estoque !== null && newQty > i.estoque) return [i];
+            return [{ ...i, qtd: newQty }];
+          });
+          return { items };
+        });
       },
 
       clear() {

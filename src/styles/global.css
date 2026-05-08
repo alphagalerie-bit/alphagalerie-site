@@ -88,6 +88,54 @@ button {
   color: var(--text);
 }
 
+.section-head {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 0 24px 28px;
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 24px;
+  animation: fadeUp 0.8s ease both;
+}
+
+.section-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #c9a961;
+  margin-bottom: 10px;
+}
+
+.section-eyebrow .num {
+  color: rgba(244, 244, 244, 0.35);
+  margin-right: 10px;
+}
+
+.section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  font-weight: 500;
+  line-height: 1.1;
+  color: #f4f4f4;
+  margin: 0;
+}
+
+.section-title em {
+  color: #c9a961;
+  font-style: italic;
+}
+
+.section-sub {
+  max-width: 420px;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  line-height: 1.7;
+  color: rgba(244, 244, 244, 0.58);
+  margin: 0;
+}
+
 /* Products grid — responsive breakpoints matching original */
 .products-grid-responsive {
   grid-template-columns: repeat(2, 1fr) !important;
@@ -105,6 +153,18 @@ button {
   .products-grid-responsive {
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
     gap: 32px !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .section-head {
+    padding: 0 16px 24px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .section-sub {
+    max-width: none;
   }
 }
 

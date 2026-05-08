@@ -8,6 +8,7 @@ import type { FreteResult } from '../../lib/frete';
 import type { Pedido } from '../../types';
 import PixPayment from './PixPayment';
 import CardPayment from './CardPayment';
+import { formatCurrency as fmt } from '../../lib/format';
 import styles from './CheckoutModal.module.css';
 
 class CardErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean }> {
@@ -61,8 +62,7 @@ function maskTelefone(value: string): string {
   return digits.replace(/^(\d{2})(\d)/, '($1) $2').replace(/(\d{5})(\d)/, '$1-$2');
 }
 
-const fmt = (v: number) =>
-  new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
+// use shared cached formatter via `fmt`
 
 export default function CheckoutModal({ onClose }: CheckoutModalProps) {
   const dialogRef = useRef<HTMLDivElement>(null);

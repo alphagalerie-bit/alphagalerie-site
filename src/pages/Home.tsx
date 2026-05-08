@@ -11,6 +11,7 @@ import ProductGrid from '../components/ProductGrid';
 import CartDrawer from '../components/CartDrawer';
 import ProductModal from '../components/ProductModal';
 import FloatingWhatsApp from '../components/FloatingWhatsApp';
+import AddedToCartToast from '../components/AddedToCartToast';
 import Footer from '../components/Footer';
 import HempSection from '../components/HempSection';
 
@@ -56,7 +57,7 @@ export default function Home() {
   const { data: categorias = [] } = useCategories();
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(globalThis.location.search);
     const q = params.get('q');
     const sub = params.get('sub');
     const cat = params.get('cat');
@@ -72,7 +73,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(globalThis.location.search);
     const catSlug = params.get('cat');
     if (catSlug && categorias.length > 0) {
       const match = categorias.find(
@@ -83,7 +84,7 @@ export default function Home() {
   }, [categorias]);
 
   const produtoIdParam = searchParams.get('p');
-  const produtoId = produtoIdParam ? parseInt(produtoIdParam, 10) : null;
+  const produtoId = produtoIdParam ? Number.parseInt(produtoIdParam, 10) : null;
 
   function closeProductModal() {
     setSearchParams((prev) => {
@@ -101,6 +102,20 @@ export default function Home() {
       <HeroSection />
 
       <main id="main-content">
+        <div className="section-head">
+          <div>
+            <div className="section-eyebrow">
+              <span className="num">01</span> Vitrine
+            </div>
+            <h2 className="section-title">
+              A vitrine, <em>refinada</em>.
+            </h2>
+          </div>
+          <p className="section-sub">
+            Da seda artesanal ao charuto raro. Cada peça selecionada com cuidado para quem busca qualidade.
+          </p>
+        </div>
+
         <ProductGrid
           categoryId={categoryId}
           onCategoryChange={setCategoryId}
@@ -129,6 +144,7 @@ export default function Home() {
       <ProductModal produtoId={produtoId} onClose={closeProductModal} />
 
       <FloatingWhatsApp />
+      <AddedToCartToast onOpenCart={() => setCartOpen(true)} />
 
       {popupOpen && (
         <RecuperacaoPopup onClose={() => setPopupOpen(false)} />
