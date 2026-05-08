@@ -5,6 +5,8 @@ import { loadMercadoPago } from '../../lib/mercadopago';
 import PixPayment from './PixPayment';
 import CardPayment from './CardPayment';
 import type { Pedido } from '../../types';
+import { calcularFrete } from '../../lib/frete';
+import type { FreteResult } from '../../lib/frete';
 
 interface CheckoutModalProps {
   onClose: () => void;
@@ -13,6 +15,14 @@ interface CheckoutModalProps {
 type Step = 'form' | 'pix' | 'card' | 'success';
 
 const FOCUSABLE = 'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
+
+const CUPONS: Record<string, { tipo: 'pct' | 'fixo' | 'frete'; valor: number; descricao: string }> = {
+  ALPHA10:     { tipo: 'pct',   valor: 10, descricao: '10% de desconto' },
+  ALPHA15:     { tipo: 'pct',   valor: 15, descricao: '15% de desconto' },
+  VIP20:       { tipo: 'pct',   valor: 20, descricao: '20% de desconto VIP' },
+  BEMVINDO:    { tipo: 'fixo',  valor: 15, descricao: 'R$ 15 de desconto' },
+  FRETEGRATIS: { tipo: 'frete', valor: 0,  descricao: 'Frete grátis' },
+};
 
 function maskTelefone(value: string): string {
   const digits = value.replace(/\D/g, '').slice(0, 11);
@@ -49,7 +59,28 @@ export default function CheckoutModal({ onClose }: CheckoutModalProps) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [mpInstance, setMpInstance] = useState<any>(null);
 
-  const total = items.reduce((acc, i) => acc + i.preco * i.qtd, 0);
+  const [cupomInput, setCupomInput] = useState('');
+  const [cupomAtivo, setCupomAtivo] = useState<(typeof CUPONS)[string] & { codigo: string } | null>(null);
+  const [cupomStatus, setCupomStatus] = useState<{ ok: boolean; msg: string } | null>(null);
+  const [frete, setFrete] = useState<FreteResult>({ valor: 0, label: '' });
+
+  const subtotal = items.reduce((acc, i) => acc + i.preco * i.qtd, 0);
+
+  const descontoPix = pagamento === 'pix' ? subtotal * 0.05 : 0;
+
+  const freteValor = (() => {
+    if (!cupomAtivo || cupomAtivo.tipo !== 'frete') return frete.valor;
+    return 0;
+  })();
+
+  const descontoCupom = (() => {
+    if (!cupomAtivo) return 0;
+    if (cupomAtivo.tipo === 'pct') return (subtotal - descontoPix) * (cupomAtivo.valor / 100);
+    if (cupomAtivo.tipo === 'fixo') return Math.min(cupomAtivo.valor, subtotal - descontoPix);
+    return 0;
+  })();
+
+  const total = Math.max(0, subtotal - descontoPix - descontoCupom + freteValor);
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -78,6 +109,43 @@ export default function CheckoutModal({ onClose }: CheckoutModalProps) {
       document.body.style.overflow = '';
     };
   }, [onClose]);
+
+  // Auto-fill coupon from popup sessionStorage
+  useEffect(() => {
+    const auto = sessionStorage.getItem('ag_cupom_auto');
+    if (auto) {
+      sessionStorage.removeItem('ag_cupom_auto');
+      const codigo = auto.trim().toUpperCase();
+      const cupom = CUPONS[codigo];
+      if (cupom) {
+        setCupomInput(codigo);
+        setCupomAtivo({ ...cupom, codigo });
+        setCupomStatus({ ok: true, msg: `✓ ${cupom.descricao} aplicado!` });
+      }
+    }
+  }, []);
+
+  // Recalculate frete whenever entrega type or CEP changes
+  useEffect(() => {
+    setFrete(calcularFrete(entrega, cep));
+  }, [entrega, cep]);
+
+  function handleAplicarCupom() {
+    const codigo = cupomInput.trim().toUpperCase();
+    if (!codigo) {
+      setCupomAtivo(null);
+      setCupomStatus(null);
+      return;
+    }
+    const cupom = CUPONS[codigo];
+    if (!cupom) {
+      setCupomAtivo(null);
+      setCupomStatus({ ok: false, msg: '✗ Cupom inválido ou expirado' });
+    } else {
+      setCupomAtivo({ ...cupom, codigo });
+      setCupomStatus({ ok: true, msg: `✓ ${cupom.descricao} aplicado!` });
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -259,6 +327,68 @@ export default function CheckoutModal({ onClose }: CheckoutModalProps) {
               <div style={fieldStyle}>
                 <label htmlFor="co_obs" style={labelStyle}>Observações</label>
                 <textarea id="co_obs" rows={3} value={observacoes} onChange={(e) => setObservacoes(e.target.value)} placeholder="Alguma instrução especial?" style={{ ...inputStyle, resize: 'vertical' }} />
+              </div>
+
+              {/* Cupom de desconto */}
+              <div style={{ marginBottom: '0.75rem' }}>
+                <label htmlFor="co_cupom" style={labelStyle}>Cupom de desconto</label>
+                <div style={{ display: 'flex', gap: '8px', marginTop: '0.35rem' }}>
+                  <input
+                    id="co_cupom"
+                    type="text"
+                    value={cupomInput}
+                    onChange={(e) => setCupomInput(e.target.value.toUpperCase())}
+                    placeholder="ALPHA10"
+                    style={{ ...inputStyle, flex: 1, textTransform: 'uppercase' }}
+                  />
+                  <button
+                    type="button"
+                    onClick={handleAplicarCupom}
+                    style={{
+                      padding: '0.625rem 1rem', background: 'transparent', border: '1px solid #c9a961',
+                      color: '#c9a961', fontFamily: 'Inter, sans-serif', fontSize: '0.75rem',
+                      fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap', borderRadius: 2,
+                    }}
+                  >
+                    Aplicar
+                  </button>
+                </div>
+                {cupomStatus && (
+                  <p style={{ fontSize: '0.75rem', marginTop: '4px', color: cupomStatus.ok ? '#4ade80' : '#ef4444' }}>
+                    {cupomStatus.msg}
+                  </p>
+                )}
+              </div>
+
+              {/* Resumo do pedido */}
+              <div style={{ background: '#111', border: '1px solid rgba(244,244,244,0.08)', borderRadius: 2, padding: '1rem', marginBottom: '0.75rem', fontSize: '0.8rem', fontFamily: 'Inter, sans-serif' }}>
+                <p style={{ color: 'rgba(244,244,244,0.5)', fontSize: '0.65rem', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.75rem' }}>Resumo</p>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.35rem', color: 'rgba(244,244,244,0.7)' }}>
+                  <span>Subtotal</span><span>{fmt(subtotal)}</span>
+                </div>
+                {descontoPix > 0 && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.35rem', color: '#c9a961' }}>
+                    <span>Desconto PIX (5%)</span><span>− {fmt(descontoPix)}</span>
+                  </div>
+                )}
+                {freteValor > 0 && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.35rem', color: 'rgba(244,244,244,0.7)' }}>
+                    <span>{frete.label || 'Frete'}</span><span>{fmt(freteValor)}</span>
+                  </div>
+                )}
+                {frete.valor > 0 && cupomAtivo?.tipo === 'frete' && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.35rem', color: '#4ade80' }}>
+                    <span>Frete grátis (cupom)</span><span>− {fmt(frete.valor)}</span>
+                  </div>
+                )}
+                {descontoCupom > 0 && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.35rem', color: '#4ade80' }}>
+                    <span>Cupom {cupomAtivo?.codigo}</span><span>− {fmt(descontoCupom)}</span>
+                  </div>
+                )}
+                <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid rgba(244,244,244,0.08)', paddingTop: '0.5rem', marginTop: '0.5rem', color: '#f4f4f4', fontWeight: 700, fontSize: '0.95rem' }}>
+                  <span>Total</span><span style={{ color: '#c9a961' }}>{fmt(total)}</span>
+                </div>
               </div>
 
               {submitError && (
