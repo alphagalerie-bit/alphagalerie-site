@@ -1,5 +1,6 @@
 // src/components/VariacoesModal.tsx
 import { useEffect, useRef } from 'react';
+import { formatCurrency as fmt } from '../lib/format';
 import type { Produto, Variacao } from '../types';
 
 interface VariacoesModalProps {
@@ -47,8 +48,6 @@ export default function VariacoesModal({ produto, onClose, onSelect }: Variacoes
   if (!produto) return null;
 
   const variacoes = produto._variacoes ?? [];
-  const fmt = (v: number) =>
-    new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
 
   return (
     <>
