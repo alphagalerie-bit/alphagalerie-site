@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useVisita } from '../hooks/useVisita';
 import { useCartStore } from '../store/cart';
+import { useCategories } from '../hooks/useCategories';
 import RecuperacaoPopup from '../components/RecuperacaoPopup';
 import AnnouncementBar from '../components/AnnouncementBar';
 import HeroSection from '../components/HeroSection';
@@ -21,6 +22,8 @@ export default function Home() {
   const [cartOpen, setCartOpen] = useState(false);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [popupOpen, setPopupOpen] = useState(false);
+  const [initialSearch, setInitialSearch] = useState('');
+  const [initialSubcat, setInitialSubcat] = useState<string | null>(null);
 
   useVisita();
 
@@ -50,6 +53,35 @@ export default function Home() {
     };
   }, [cartItems.length]);
 
+  const { data: categorias = [] } = useCategories();
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const q = params.get('q');
+    const sub = params.get('sub');
+    const cat = params.get('cat');
+
+    if (q) setInitialSearch(q);
+    if (sub) setInitialSubcat(sub);
+
+    if (cat || sub || q) {
+      setTimeout(() => {
+        document.getElementById('produtos')?.scrollIntoView({ behavior: 'smooth' });
+      }, 300);
+    }
+  }, []);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const catSlug = params.get('cat');
+    if (catSlug && categorias.length > 0) {
+      const match = categorias.find(
+        (c) => c.slug === catSlug || c.nome.toLowerCase() === catSlug.toLowerCase()
+      );
+      if (match) setCategoryId(match.id);
+    }
+  }, [categorias]);
+
   const produtoIdParam = searchParams.get('p');
   const produtoId = produtoIdParam ? parseInt(produtoIdParam, 10) : null;
 
@@ -69,7 +101,12 @@ export default function Home() {
       <HeroSection />
 
       <main id="main-content">
-        <ProductGrid categoryId={categoryId} onCategoryChange={setCategoryId} />
+        <ProductGrid
+          categoryId={categoryId}
+          onCategoryChange={setCategoryId}
+          initialSearch={initialSearch}
+          initialSubcat={initialSubcat}
+        />
       </main>
       <HempSection />
       <Footer />

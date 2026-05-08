@@ -1,5 +1,5 @@
 // src/components/ProductGrid.tsx
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { useCategories } from '../hooks/useCategories';
 import { useProducts } from '../hooks/useProducts';
 import { useCartStore } from '../store/cart';
@@ -10,7 +10,11 @@ import VariacoesModal from './VariacoesModal';
 interface ProductGridProps {
   categoryId: number | null;
   onCategoryChange: (id: number | null) => void;
+  initialSearch?: string;
+  initialSubcat?: string | null;
 }
+
+const PAGE_SIZE = 24;
 
 function SkeletonCard() {
   return (
@@ -41,39 +45,50 @@ function SkeletonCard() {
   );
 }
 
-export default function ProductGrid({ categoryId, onCategoryChange }: ProductGridProps) {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [activeSubcat, setActiveSubcat] = useState<string | null>(null);
+export default function ProductGrid({
+  categoryId,
+  onCategoryChange,
+  initialSearch = '',
+  initialSubcat = null,
+}: ProductGridProps) {
+  const [searchInput, setSearchInput] = useState(initialSearch);
+  const [search, setSearch] = useState(initialSearch);
+  const [activeSubcat, setActiveSubcat] = useState<string | null>(initialSubcat);
+  const [page, setPage] = useState(0);
   const [variacoesTarget, setVariacoesTarget] = useState<Produto | null>(null);
+  const searchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const { data: produtos = [], isLoading: loadingProdutos } = useProducts(categoryId);
+  // Reset page when filters change
+  useEffect(() => { setPage(0); setActiveSubcat(null); }, [categoryId]);
+  useEffect(() => { setPage(0); }, [search]);
+
+  // Debounce search input → server-side search
+  function handleSearchChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const val = e.target.value;
+    setSearchInput(val);
+    if (searchTimer.current) clearTimeout(searchTimer.current);
+    searchTimer.current = setTimeout(() => setSearch(val), 350);
+  }
+
+  const { data, isLoading, isFetching } = useProducts(categoryId, page, search);
   const { data: categorias = [] } = useCategories();
   const addItem = useCartStore((s) => s.addItem);
 
+  const produtos = data?.produtos ?? [];
+  const total = data?.total ?? 0;
+  const totalPages = Math.ceil(total / PAGE_SIZE);
+
+  // Client-side subcategory filter (within the current page)
   const subcategorias = useMemo(() => {
-    if (!categoryId) return [];
     const set = new Set<string>();
-    produtos.forEach((p) => {
-      if (p.subcategoria) set.add(p.subcategoria);
-    });
+    produtos.forEach((p) => { if (p.subcategoria) set.add(p.subcategoria); });
     return Array.from(set).sort();
-  }, [produtos, categoryId]);
+  }, [produtos]);
 
   const filtered = useMemo(() => {
-    let list = produtos;
-    if (activeSubcat) {
-      list = list.filter((p) => p.subcategoria === activeSubcat);
-    }
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase();
-      list = list.filter(
-        (p) =>
-          p.nome.toLowerCase().includes(q) ||
-          p.marca.toLowerCase().includes(q)
-      );
-    }
-    return list;
-  }, [produtos, activeSubcat, searchQuery]);
+    if (!activeSubcat) return produtos;
+    return produtos.filter((p) => p.subcategoria === activeSubcat);
+  }, [produtos, activeSubcat]);
 
   function handleAddToCart(produto: Produto) {
     addItem(produto);
@@ -83,6 +98,18 @@ export default function ProductGrid({ categoryId, onCategoryChange }: ProductGri
     addItem(produto, variacao);
     setVariacoesTarget(null);
   }
+
+  const btnBase: React.CSSProperties = {
+    padding: '0.5rem 1.25rem',
+    fontFamily: 'Inter, sans-serif',
+    fontSize: '0.7rem',
+    fontWeight: 600,
+    letterSpacing: '0.12em',
+    textTransform: 'uppercase',
+    cursor: 'pointer',
+    borderRadius: 2,
+    transition: 'border-color 0.15s, color 0.15s, background 0.15s',
+  };
 
   return (
     <section
@@ -100,17 +127,10 @@ export default function ProductGrid({ categoryId, onCategoryChange }: ProductGri
           type="button"
           onClick={() => { onCategoryChange(null); setActiveSubcat(null); }}
           style={{
-            padding: '0.5rem 1.25rem',
-            fontFamily: 'Inter, sans-serif',
-            fontSize: '0.7rem',
-            fontWeight: 600,
-            letterSpacing: '0.12em',
-            textTransform: 'uppercase',
+            ...btnBase,
             border: `1px solid ${categoryId === null ? '#c9a961' : 'rgba(244,244,244,0.15)'}`,
             background: categoryId === null ? 'rgba(201,169,97,0.1)' : 'transparent',
             color: categoryId === null ? '#c9a961' : 'rgba(244,244,244,0.6)',
-            cursor: 'pointer',
-            borderRadius: 2,
           }}
         >
           TODOS
@@ -121,17 +141,10 @@ export default function ProductGrid({ categoryId, onCategoryChange }: ProductGri
             type="button"
             onClick={() => { onCategoryChange(cat.id); setActiveSubcat(null); }}
             style={{
-              padding: '0.5rem 1.25rem',
-              fontFamily: 'Inter, sans-serif',
-              fontSize: '0.7rem',
-              fontWeight: 600,
-              letterSpacing: '0.12em',
-              textTransform: 'uppercase',
+              ...btnBase,
               border: `1px solid ${categoryId === cat.id ? '#c9a961' : 'rgba(244,244,244,0.15)'}`,
               background: categoryId === cat.id ? 'rgba(201,169,97,0.1)' : 'transparent',
               color: categoryId === cat.id ? '#c9a961' : 'rgba(244,244,244,0.6)',
-              cursor: 'pointer',
-              borderRadius: 2,
             }}
           >
             {cat.nome.toUpperCase()}
@@ -139,7 +152,7 @@ export default function ProductGrid({ categoryId, onCategoryChange }: ProductGri
         ))}
       </div>
 
-      {/* Filtro de subcategorias */}
+      {/* Filtro de subcategorias (client-side, apenas da página atual) */}
       {subcategorias.length > 0 && (
         <div
           style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1.25rem' }}
@@ -150,16 +163,13 @@ export default function ProductGrid({ categoryId, onCategoryChange }: ProductGri
             type="button"
             onClick={() => setActiveSubcat(null)}
             style={{
+              ...btnBase,
               padding: '0.35rem 0.875rem',
-              fontFamily: 'Inter, sans-serif',
               fontSize: '0.65rem',
               fontWeight: 500,
-              letterSpacing: '0.1em',
               border: `1px solid ${activeSubcat === null ? 'rgba(201,169,97,0.5)' : 'rgba(244,244,244,0.1)'}`,
               background: 'transparent',
               color: activeSubcat === null ? '#c9a961' : 'rgba(244,244,244,0.45)',
-              cursor: 'pointer',
-              borderRadius: 2,
             }}
           >
             Todas
@@ -170,16 +180,13 @@ export default function ProductGrid({ categoryId, onCategoryChange }: ProductGri
               type="button"
               onClick={() => setActiveSubcat(s)}
               style={{
+                ...btnBase,
                 padding: '0.35rem 0.875rem',
-                fontFamily: 'Inter, sans-serif',
                 fontSize: '0.65rem',
                 fontWeight: 500,
-                letterSpacing: '0.1em',
                 border: `1px solid ${activeSubcat === s ? 'rgba(201,169,97,0.5)' : 'rgba(244,244,244,0.1)'}`,
                 background: 'transparent',
                 color: activeSubcat === s ? '#c9a961' : 'rgba(244,244,244,0.45)',
-                cursor: 'pointer',
-                borderRadius: 2,
               }}
             >
               {s}
@@ -188,29 +195,13 @@ export default function ProductGrid({ categoryId, onCategoryChange }: ProductGri
         </div>
       )}
 
-      {/* Campo de busca */}
+      {/* Campo de busca (server-side, debounced) */}
       <div style={{ position: 'relative', marginBottom: '2rem', maxWidth: 400 }}>
         <svg
-          style={{
-            position: 'absolute',
-            left: '0.75rem',
-            top: '50%',
-            transform: 'translateY(-50%)',
-            color: 'rgba(244,244,244,0.35)',
-            pointerEvents: 'none',
-          }}
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          aria-hidden="true"
+          style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)', color: 'rgba(244,244,244,0.35)', pointerEvents: 'none' }}
+          width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"
         >
-          <circle cx="11" cy="11" r="8" />
-          <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
         </svg>
         <label htmlFor="product-search" style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)' }}>
           Buscar produtos
@@ -219,8 +210,8 @@ export default function ProductGrid({ categoryId, onCategoryChange }: ProductGri
           id="product-search"
           type="search"
           placeholder="Buscar por nome ou marca..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          value={searchInput}
+          onChange={handleSearchChange}
           style={{
             width: '100%',
             padding: '0.625rem 0.75rem 0.625rem 2.5rem',
@@ -235,23 +226,37 @@ export default function ProductGrid({ categoryId, onCategoryChange }: ProductGri
         />
       </div>
 
+      {/* Total e estado de carregamento */}
+      {!isLoading && total > 0 && (
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.75rem', color: 'rgba(244,244,244,0.35)', letterSpacing: '0.06em', marginBottom: '1.25rem' }}>
+          {total} produto{total !== 1 ? 's' : ''} encontrado{total !== 1 ? 's' : ''}
+          {isFetching && ' · atualizando...'}
+        </p>
+      )}
+
       {/* Grid */}
-      {loadingProdutos ? (
+      {isLoading ? (
         <div
           style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px,1fr))', gap: '1.5rem' }}
           aria-busy="true"
           aria-label="Carregando produtos"
         >
-          <SkeletonCard />
-          <SkeletonCard />
-          <SkeletonCard />
+          {Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)}
         </div>
       ) : filtered.length === 0 ? (
         <div role="status" style={{ textAlign: 'center', padding: '4rem 0', color: 'rgba(244,244,244,0.4)', fontFamily: 'Inter, sans-serif' }}>
           Nenhum produto encontrado.
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px,1fr))', gap: '1.5rem' }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(260px,1fr))',
+            gap: '1.5rem',
+            opacity: isFetching ? 0.7 : 1,
+            transition: 'opacity 0.15s',
+          }}
+        >
           {filtered.map((produto) => (
             <ProductCard
               key={produto.id}
@@ -260,6 +265,79 @@ export default function ProductGrid({ categoryId, onCategoryChange }: ProductGri
               onOpenVariacoes={setVariacoesTarget}
             />
           ))}
+        </div>
+      )}
+
+      {/* Paginação */}
+      {totalPages > 1 && (
+        <div
+          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginTop: '3rem', flexWrap: 'wrap' }}
+          role="navigation"
+          aria-label="Paginação"
+        >
+          <button
+            type="button"
+            onClick={() => setPage((p) => Math.max(0, p - 1))}
+            disabled={page === 0}
+            aria-label="Página anterior"
+            style={{
+              ...btnBase,
+              padding: '0.5rem 1rem',
+              border: '1px solid rgba(244,244,244,0.15)',
+              background: 'transparent',
+              color: page === 0 ? 'rgba(244,244,244,0.2)' : 'rgba(244,244,244,0.6)',
+              cursor: page === 0 ? 'not-allowed' : 'pointer',
+            }}
+          >
+            ←
+          </button>
+
+          {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
+            // Show first, last and pages around current
+            const pageNum = totalPages <= 7 ? i : (
+              i === 0 ? 0 :
+              i === 6 ? totalPages - 1 :
+              page <= 2 ? i :
+              page >= totalPages - 3 ? totalPages - 7 + i :
+              page - 2 + i
+            );
+            return (
+              <button
+                key={pageNum}
+                type="button"
+                onClick={() => setPage(pageNum)}
+                aria-current={page === pageNum ? 'page' : undefined}
+                aria-label={`Página ${pageNum + 1}`}
+                style={{
+                  ...btnBase,
+                  padding: '0.5rem 0.875rem',
+                  border: `1px solid ${page === pageNum ? '#c9a961' : 'rgba(244,244,244,0.15)'}`,
+                  background: page === pageNum ? 'rgba(201,169,97,0.1)' : 'transparent',
+                  color: page === pageNum ? '#c9a961' : 'rgba(244,244,244,0.5)',
+                  minWidth: 40,
+                }}
+              >
+                {pageNum + 1}
+              </button>
+            );
+          })}
+
+          <button
+            type="button"
+            onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+            disabled={page >= totalPages - 1}
+            aria-label="Próxima página"
+            style={{
+              ...btnBase,
+              padding: '0.5rem 1rem',
+              border: '1px solid rgba(244,244,244,0.15)',
+              background: 'transparent',
+              color: page >= totalPages - 1 ? 'rgba(244,244,244,0.2)' : 'rgba(244,244,244,0.6)',
+              cursor: page >= totalPages - 1 ? 'not-allowed' : 'pointer',
+            }}
+          >
+            →
+          </button>
         </div>
       )}
 
