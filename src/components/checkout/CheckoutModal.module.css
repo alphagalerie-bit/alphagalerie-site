@@ -408,6 +408,7 @@
   flex: 1;
   padding: 16px 18px;
   min-height: 52px;
+  width: auto;
   background: #c9a961;
   border: none;
   color: #000;
@@ -435,9 +436,10 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 60px 32px;
+  padding: 40px 32px;
   text-align: center;
   flex: 1;
+  min-height: 0;
 }
 
 .successCheck {

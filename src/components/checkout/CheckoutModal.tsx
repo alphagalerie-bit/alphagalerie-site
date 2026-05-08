@@ -202,9 +202,30 @@ export default function CheckoutModal({ onClose }: CheckoutModalProps) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSubmitError(null);
+
+    // Validações explícitas
+    if (!nome.trim()) {
+      setSubmitError('Por favor, informe seu nome completo.');
+      return;
+    }
+    if (telefone.replace(/\D/g, '').length < 10) {
+      setSubmitError('Por favor, informe um WhatsApp válido com DDD.');
+      return;
+    }
+    if (entrega === 'delivery' && cep.replace(/\D/g, '').length < 8) {
+      setSubmitError('Digite um CEP válido para calcular o frete.');
+      return;
+    }
+    if (entrega === 'delivery' && !endereco.trim()) {
+      setSubmitError('Por favor, informe o endereço de entrega.');
+      return;
+    }
+
     setIsSubmitting(true);
 
-    const enderecoCompleto = [endereco, numero, complemento].filter(Boolean).join(', ');
+    const enderecoCompleto = entrega === 'retirada'
+      ? 'RETIRADA NO LOCAL · Alpha Galerie · Alphaville'
+      : [endereco, numero, complemento, bairro, cidade, cep].filter(Boolean).join(', ');
 
     const dadosPedido: Pedido = {
       nome, telefone,
@@ -247,17 +268,19 @@ export default function CheckoutModal({ onClose }: CheckoutModalProps) {
   }
 
   return (
-    <div className={styles.overlay}>
-      <div ref={dialogRef} className={styles.box} role="dialog" aria-modal="true" aria-label="Finalizar pedido">
+    <div className={styles.overlay} style={step === 'success' ? { alignItems: 'center' } : undefined}>
+      <div ref={dialogRef} className={styles.box} role="dialog" aria-modal="true" aria-label="Finalizar pedido" style={step === 'success' ? { minHeight: 'auto', maxHeight: 'none', justifyContent: 'center' } : undefined}>
 
         {/* ── Header ── */}
-        <div className={styles.head}>
-          <div className={styles.headText}>
-            <h3 className={styles.headTitle}>Finalizar <em>pedido</em></h3>
-            <p className={styles.headSub}>Preencha seus dados para finalizar o pedido.</p>
+        {step !== 'success' && (
+          <div className={styles.head}>
+            <div className={styles.headText}>
+              <h3 className={styles.headTitle}>Finalizar <em>pedido</em></h3>
+              <p className={styles.headSub}>Preencha seus dados para finalizar o pedido.</p>
+            </div>
+            <button type="button" className={styles.closeBtn} onClick={onClose} aria-label="Fechar">×</button>
           </div>
-          <button type="button" className={styles.closeBtn} onClick={onClose} aria-label="Fechar">×</button>
-        </div>
+        )}
 
         {/* ── Body ── */}
         {step === 'form' && (
@@ -470,6 +493,11 @@ export default function CheckoutModal({ onClose }: CheckoutModalProps) {
 
             {/* Footer fixo */}
             <div className={styles.foot}>
+              {submitError && (
+                <p role="alert" style={{ color: '#ef4444', fontFamily: "'JetBrains Mono', monospace", fontSize: 10, letterSpacing: '0.1em', marginBottom: 10 }}>
+                  ✗ {submitError}
+                </p>
+              )}
               <div className={styles.footTotal}>
                 <span className={styles.footTotalLabel}>Total</span>
                 <span className={styles.footTotalValue}>{fmt(total)}</span>
@@ -508,7 +536,7 @@ export default function CheckoutModal({ onClose }: CheckoutModalProps) {
             <h2 className={styles.successTitle}>Pedido confirmado!</h2>
             {pedidoId && <p className={styles.successId}>Pedido #{pedidoId}</p>}
             <p className={styles.successMsg}>Em breve entraremos em contato pelo WhatsApp para confirmar os detalhes.</p>
-            <button type="button" className={styles.btnGold} onClick={onClose} style={{ maxWidth: 260 }}>FECHAR</button>
+            <button type="button" onClick={onClose} style={{ padding: '14px 48px', background: '#c9a961', border: 'none', color: '#000', fontFamily: "'JetBrains Mono', monospace", fontSize: 12, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', cursor: 'pointer', marginTop: 8 }}>FECHAR</button>
           </div>
         )}
 
