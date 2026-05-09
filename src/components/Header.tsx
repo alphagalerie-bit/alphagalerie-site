@@ -2,6 +2,8 @@ import type { FC } from 'react';
 import { useCartStore } from '../store/cart';
 import styles from './Header.module.css';
 
+const APP_VERSION = (import.meta.env.VITE_APP_VERSION as string) ?? new Date().toISOString().slice(0, 10);
+
 interface HeaderProps {
   onOpenCart: () => void;
 }
@@ -32,7 +34,7 @@ const Header: FC<HeaderProps> = ({ onOpenCart }) => {
         <div className={styles.navInner}>
           <a href="/" aria-label="Alpha Galerie — página inicial">
             <img
-              src="/logo.svg"
+              src={`/logo.svg?v=${APP_VERSION}`}
               alt="alpha.galerie"
               className={styles.logoImg}
               width={120}
