@@ -1,6 +1,7 @@
 import type { FC } from 'react';
 import { useCartStore } from '../store/cart';
 import styles from './Header.module.css';
+import footerStyles from './Footer.module.css';
 
 interface HeaderProps {
   onOpenCart: () => void;
@@ -30,9 +31,9 @@ const Header: FC<HeaderProps> = ({ onOpenCart }) => {
     <header>
       <nav className={styles.nav}>
         <div className={styles.navInner}>
-          <a href="/" className={styles.brandLink} aria-label="Alpha Galerie — página inicial">
-            <span className={styles.brandMark} aria-hidden="true" />
-            <span className={styles.brandText}>alpha.galerie</span>
+          <a href="/" className={footerStyles.brandName} aria-label="Alpha Galerie — página inicial">
+            <span className={footerStyles.brandMark} aria-hidden="true" />
+            <span>alpha.galerie</span>
           </a>
 
           <ul className={styles.navLinks}>
