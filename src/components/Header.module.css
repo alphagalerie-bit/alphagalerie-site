@@ -31,6 +31,44 @@
   filter: drop-shadow(0 0 14px rgba(201, 169, 97, 0.6));
 }
 
+/* Brand mark matching footer: circle with "ag" */
+.brandLink {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px;
+  letter-spacing: 0.04em;
+  color: var(--gold);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.brandMark {
+  width: 32px;
+  height: 32px;
+  border: 1.5px solid var(--gold);
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.brandMark::after {
+  content: 'ag';
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-weight: 500;
+  font-size: 18px;
+  color: var(--gold);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.brandText {
+  color: var(--gold);
+}
+
 .navLinks {
   display: flex;
   align-items: center;
