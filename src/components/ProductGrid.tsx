@@ -260,7 +260,8 @@ export default function ProductGrid({
       {/* Grid */}
       {isLoading ? (
         <div
-          style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 12 }}
+          style={{ display: 'grid', gap: 12 }}
+          className="products-grid-responsive"
           aria-busy="true"
           aria-label="Carregando produtos"
         >
@@ -275,7 +276,6 @@ export default function ProductGrid({
           className="products-grid-responsive"
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(2,1fr)',
             gap: 12,
             opacity: isFetching ? 0.7 : 1,
             transition: 'opacity 0.15s',

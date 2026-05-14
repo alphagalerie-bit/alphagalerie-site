@@ -137,15 +137,26 @@ button {
 }
 
 /* Products grid — responsive breakpoints matching original */
+
 .products-grid-responsive {
-  /* Mobile-first: 1 column on very small screens to avoid cramped product rows */
-  grid-template-columns: repeat(1, 1fr) !important;
+  /* Default: two columns to keep products compact on mobile */
+  grid-template-columns: repeat(2, 1fr) !important;
   gap: 12px !important;
+  align-items: stretch;
+  justify-items: stretch;
+}
+
+/* Very small phones: fall back to single column only on very narrow screens (<=320px) */
+@media (max-width: 320px) {
+  .products-grid-responsive {
+    grid-template-columns: repeat(1, 1fr) !important;
+    gap: 10px !important;
+  }
 }
 
 @media (min-width: 480px) {
   .products-grid-responsive {
-    grid-template-columns: repeat(2, 1fr) !important;
+    grid-template-columns: repeat(2, minmax(150px, 1fr)) !important;
     gap: 16px !important;
   }
 }
